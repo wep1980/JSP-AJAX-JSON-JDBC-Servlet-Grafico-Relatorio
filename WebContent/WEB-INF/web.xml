@@ -7,4 +7,11 @@
     <welcome-file>index.jsp</welcome-file>
  
   </welcome-file-list>
+  
+  <!-- A conexao com banco de dados e estabelicda na hora que o projeto sobe -->
+  <filter> 
+    <filter-name>conexao</filter-name> 
+    <filter-class>br.com.waldirep.filter.FilterAutenticacao</filter-class>
+  </filter>
+  
 </web-app>
