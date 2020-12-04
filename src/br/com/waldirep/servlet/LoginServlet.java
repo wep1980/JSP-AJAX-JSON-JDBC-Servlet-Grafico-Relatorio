@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import br.com.waldirep.beans.Usuario;
+import br.com.waldirep.DAO.LoginDAO;
 
 /**
  * Classe servlet que intercepta os dados
@@ -19,6 +19,7 @@ public class LoginServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
    
 	
+	private LoginDAO loginDAO = new LoginDAO();
 	
     public LoginServlet() {
         super();
@@ -40,20 +41,21 @@ public class LoginServlet extends HttpServlet {
 	 * Intercepta o envio do formulario
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		 Usuario user = new Usuario();
 		 
+		try {
+			
 		 String login = request.getParameter("login"); //Pega o login digitado na frontend
 		 String senha = request.getParameter("senha"); //Pega a senha digitado na frontend
 		 
-		 if(user.validarLogin(login, senha)) {
+		 if(loginDAO.validarLogin(login, senha)) {
 			 RequestDispatcher dispatcher = request.getRequestDispatcher("acessoLiberado.jsp");
 			 dispatcher.forward(request, response);
 		 }else {
 			 RequestDispatcher dispatcher = request.getRequestDispatcher("acessoNegado.jsp");
 			 dispatcher.forward(request, response);
-		 }
-	
+		 } 
+		 } catch (Exception e) {
+			
+			}
 	}
-
 }

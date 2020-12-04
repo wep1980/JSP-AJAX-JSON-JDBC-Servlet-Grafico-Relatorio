@@ -70,16 +70,5 @@ public class Usuario {
 		return "Usuario [id=" + id + ", login=" + login + ", senha=" + senha + "]";
 	}
 	
-	
-
-	public boolean validarLogin(String login, String senha) {
-		if(login.equalsIgnoreCase("admin") && senha.equalsIgnoreCase("123")) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
-	
 
 }
