@@ -1,5 +1,6 @@
 package br.com.waldirep.beans;
 
+
 public class Usuario {
 	
 	
@@ -8,6 +9,7 @@ public class Usuario {
 	private String login;
 	
 	private String senha;
+	
 	
 	
 	public Long getId() {

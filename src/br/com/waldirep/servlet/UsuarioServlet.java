@@ -17,8 +17,10 @@ import br.com.waldirep.beans.Usuario;
 @WebServlet("/salvarUsuario")
 public class UsuarioServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
+	
        
 	private UsuarioDAO usuarioDAO = new UsuarioDAO();
+	
    
     public UsuarioServlet() {
         super();
@@ -38,6 +40,12 @@ public class UsuarioServlet extends HttpServlet {
 				request.setAttribute("usuarios", usuarioDAO.listarTodos()); // Carrega a lista de usuarios e coloca na variavel usuarios para ser visualizado na tela
 				view.forward(request, response);
 			}
+			else if (acao.equalsIgnoreCase("editar")) {
+				Usuario usuarioEdit = usuarioDAO.consultar(usuario);
+				RequestDispatcher view = request.getRequestDispatcher("/cadastroUsuario.jsp"); // Mantem na mesma tela
+				request.setAttribute("userEdit", usuarioEdit); // Carrega a lista de usuarios e coloca na variavel usuarios para ser visualizado na tela
+				view.forward(request, response);
+			}
 			} catch (Exception e) {
 				e.printStackTrace();
 		}
@@ -46,15 +54,21 @@ public class UsuarioServlet extends HttpServlet {
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	
-		
+		String id = request.getParameter("id");
 		String login = request.getParameter("login");
 		String senha = request.getParameter("senha");
 		
 		Usuario user = new Usuario();
+		user.setId(!id.isEmpty() ? Long.parseLong(id) : 0); // Se existir um ID faz a conversão, senão vai colocar o valor 0
 		user.setLogin(login);
 		user.setSenha(senha);
 		
-		usuarioDAO.salvar(user);
+		if(id == null || id.isEmpty()) {
+			usuarioDAO.salvar(user);
+		} else {
+			usuarioDAO.atualizar(user);
+		}
+		
 		
 		try {
 			RequestDispatcher view = request.getRequestDispatcher("/cadastroUsuario.jsp"); // Mantem na mesma tela
