@@ -10,6 +10,8 @@ public class Usuario {
 	
 	private String senha;
 	
+	private String nome;
+	
 	
 	
 	public Long getId() {
@@ -36,7 +38,13 @@ public class Usuario {
 		this.senha = senha;
 	}
 	
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
 	
+	public String getNome() {
+		return nome;
+	}
 	
 	
 	

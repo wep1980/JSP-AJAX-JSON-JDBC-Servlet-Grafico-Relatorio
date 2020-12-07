@@ -25,11 +25,12 @@ public class UsuarioDAO {
 	public void salvar (Usuario usuario) {
 		
 		try {
-			String sql = "insert into usuario (login, senha) values (? , ?)";
+			String sql = "insert into usuario (login, senha, nome) values (? , ? ,?)";
 			
 			PreparedStatement preparedStatement = connection.prepareStatement(sql); 
 			preparedStatement.setString(1, usuario.getLogin());
 			preparedStatement.setString(2, usuario.getSenha());
+			preparedStatement.setString(3, usuario.getNome());
 			preparedStatement.execute();
 			connection.commit();
 		} catch (Exception e) {
@@ -56,6 +57,7 @@ public class UsuarioDAO {
 		while(resultado.next()) {
 		  Usuario user = new Usuario();
 		  user.setId(resultado.getLong("id"));
+		  user.setNome(resultado.getString("nome"));
 		  user.setLogin(resultado.getString("login"));
 		  user.setSenha(resultado.getString("senha"));
 		  
@@ -98,7 +100,7 @@ public class UsuarioDAO {
 			 user.setId(resultado.getLong("id"));
 			 user.setLogin(resultado.getString("login"));
 			 user.setSenha(resultado.getString("senha"));
-			 
+			 user.setNome(resultado.getString("nome"));
 			 return user;
 		}
 		
@@ -110,11 +112,12 @@ public class UsuarioDAO {
 	public void atualizar(Usuario user) {
 		
 		try {
-			String sql = "update usuario set login = ?, senha = ? where id =" + user.getId();
+			String sql = "update usuario set login = ?, senha = ?, nome = ? where id =" + user.getId();
 			
 			PreparedStatement preparedStatement = connection.prepareStatement(sql);
 			preparedStatement.setString(1, user.getLogin());
 			preparedStatement.setString(2, user.getSenha());
+			preparedStatement.setString(3, user.getNome());
 			preparedStatement.execute();
 			connection.commit();
 		} catch (Exception e) {

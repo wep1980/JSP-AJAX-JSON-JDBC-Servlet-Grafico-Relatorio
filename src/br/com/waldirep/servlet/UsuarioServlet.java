@@ -55,11 +55,13 @@ public class UsuarioServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 	
 		String id = request.getParameter("id");
+		String nome = request.getParameter("nome");
 		String login = request.getParameter("login");
 		String senha = request.getParameter("senha");
 		
 		Usuario user = new Usuario();
 		user.setId(!id.isEmpty() ? Long.parseLong(id) : 0); // Se existir um ID faz a conversão, senão vai colocar o valor 0
+		user.setNome(nome);
 		user.setLogin(login);
 		user.setSenha(senha);
 		
