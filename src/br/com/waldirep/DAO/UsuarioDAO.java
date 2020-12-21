@@ -68,10 +68,10 @@ public class UsuarioDAO {
 	}
 	
 	
-	public void deletar(String login) {
+	public void deletar(String id) {
 		
 		try {
-			String sql = "delete from usuario where login = '"+login+"'";
+			String sql = "delete from usuario where id = '"+ id +"'";
 			PreparedStatement preparedStatement = connection.prepareStatement(sql); 
 			preparedStatement.execute();
 			connection.commit();
@@ -89,8 +89,8 @@ public class UsuarioDAO {
 
 
 
-	public Usuario consultar(String login) throws Exception {
-		String sql = "select * from usuario where login = '"+ login +"'";
+	public Usuario consultar(String id) throws Exception {
+		String sql = "select * from usuario where id = '"+ id +"'";
 		
 		PreparedStatement preparedStatement = connection.prepareStatement(sql);
 		ResultSet resultado = preparedStatement.executeQuery();
@@ -129,6 +129,21 @@ public class UsuarioDAO {
 				e1.printStackTrace();
 			}
 		}
+	}
+	
+	
+	public boolean validarLogin(String login) throws Exception {
+		String sql = "select count(1) as qtd from usuario where login = '"+ login +"'";
+		
+		PreparedStatement preparedStatement = connection.prepareStatement(sql);
+		ResultSet resultado = preparedStatement.executeQuery();
+		
+		if(resultado.next()) {
+			
+			 return resultado.getInt("qtd") <= 0; // retorna false
+		}
+		
+		return false;
 	}
 	
 	

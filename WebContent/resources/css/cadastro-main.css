@@ -288,6 +288,8 @@ textarea.input100 {
   width: 100%;
 }
 
+
+
 .contact100-form-btn {
   display: -webkit-box;
   display: -webkit-flex;
@@ -313,6 +315,8 @@ textarea.input100 {
   -moz-transition: all 0.4s;
   transition: all 0.4s;
 }
+
+
 
 .contact100-form-btn i {
   -webkit-transition: all 0.4s;

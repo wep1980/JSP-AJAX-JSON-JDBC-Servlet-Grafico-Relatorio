@@ -49,7 +49,7 @@
    <div class="container-contact100">
      <div class="wrap-contact100">
      
-      <form action="salvarUsuario" method="post" class="contact100-form validate-form">
+      <form action="salvarUsuario" method="post" class="contact100-form validate-form" id="formUser">
          <span class="contact100-form-title">
 		   Cadastro de Usuários
 		</span>
@@ -79,6 +79,13 @@
 			   <span>Salvar<i class="fa fa-long-arrow-right m-l-7" aria-hidden="true"></i></span>
 			</button>
 	   </div>
+	   
+	   <div class="container-contact100-form-btn">
+			<button type="submit" class="contact100-form-btn" onclick="document.getElementById('formUser').action = 'salvarUsuario?acao=reset'">
+			   <span>Cancelar<i class="fa fa-long-arrow-right m-l-7" aria-hidden="true"></i></span>
+			</button>
+	   </div>
+	   
    </form>
   
  </div>
@@ -92,6 +99,7 @@
 	    <table>
 	       <thead>
 			 <tr class="row100 head">
+			    <th class="cell100 column1">Id</th>
 				<th class="cell100 column1">Nome</th>
 				<th class="cell100 column2">Login</th>
 				<th class="cell100 column3">Senha</th>
@@ -107,12 +115,13 @@
 	     <tbody>
 	      <c:forEach items="${usuarios}" var="usuario">
 	         <tr class="row100 body">
-	           <td class="cell100 column1"><c:out value="${usuario.nome}"></c:out></td>
-	           <td class="cell100 column2"><c:out value="${usuario.login}"></c:out></td>
-	           <td class="cell100 column3"><c:out value="${usuario.senha}"></c:out></td>
+	           <td class="cell100 column1"><c:out value="${usuario.id}"></c:out></td>
+	           <td class="cell100 column2"><c:out value="${usuario.nome}"></c:out></td>
+	           <td class="cell100 column3"><c:out value="${usuario.login}"></c:out></td>
+	           <td class="cell100 column4"><c:out value="${usuario.senha}"></c:out></td>
 	           
-	           <td class="cell100 column5"> <a href="salvarUsuario?acao=editar&usuario=${usuario.login}">Editar</a> </td>
-	           <td class="cell100 column4"> <a  href="salvarUsuario?acao=delete&usuario=${usuario.login}">Excluir</a> </td>
+	           <td class="cell100 column5"> <a href="salvarUsuario?acao=editar&usuario=${usuario.id}">Editar</a> </td>
+	           <td class="cell100 column6"> <a  href="salvarUsuario?acao=delete&usuario=${usuario.id}">Excluir</a> </td>
 	         </tr>
 	      </c:forEach>
 	     </tbody> 

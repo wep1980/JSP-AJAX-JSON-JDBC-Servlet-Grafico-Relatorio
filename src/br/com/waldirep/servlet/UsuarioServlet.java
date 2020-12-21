@@ -45,6 +45,11 @@ public class UsuarioServlet extends HttpServlet {
 				RequestDispatcher view = request.getRequestDispatcher("/cadastroUsuario.jsp"); // Mantem na mesma tela
 				request.setAttribute("userEdit", usuarioEdit); // Carrega a lista de usuarios e coloca na variavel usuarios para ser visualizado na tela
 				view.forward(request, response);
+				
+			}else if(acao.equalsIgnoreCase("listarTodos")) {
+				RequestDispatcher view = request.getRequestDispatcher("/cadastroUsuario.jsp"); 
+				request.setAttribute("usuarios", usuarioDAO.listarTodos());
+				view.forward(request, response);
 			}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -53,33 +58,54 @@ public class UsuarioServlet extends HttpServlet {
 
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	
-		String id = request.getParameter("id");
-		String nome = request.getParameter("nome");
-		String login = request.getParameter("login");
-		String senha = request.getParameter("senha");
-		
-		Usuario user = new Usuario();
-		user.setId(!id.isEmpty() ? Long.parseLong(id) : 0); // Se existir um ID faz a conversão, senão vai colocar o valor 0
-		user.setNome(nome);
-		user.setLogin(login);
-		user.setSenha(senha);
-		
-		if(id == null || id.isEmpty()) {
-			usuarioDAO.salvar(user);
-		} else {
-			usuarioDAO.atualizar(user);
-		}
 		
 		
-		try {
-			RequestDispatcher view = request.getRequestDispatcher("/cadastroUsuario.jsp"); // Mantem na mesma tela
-			request.setAttribute("usuarios", usuarioDAO.listarTodos()); // Carrega a lista de usuarios e coloca na variavel usuarios para ser visualizado na tela
-			view.forward(request, response);
-		} catch (SQLException e) {
+		String acao = request.getParameter("acao");
+		
+		if(acao != null && acao.equalsIgnoreCase("reset")) {
+			try {
+				RequestDispatcher view = request.getRequestDispatcher("/cadastroUsuario.jsp"); // Mantem na mesma tela
+				request.setAttribute("usuarios", usuarioDAO.listarTodos()); // Carrega a lista de usuarios e coloca na variavel usuarios para ser visualizado na tela
+				view.forward(request, response);
+			} catch (SQLException e) {
+				
+				e.printStackTrace();
+			}
 			
-			e.printStackTrace();
-		}
+		}else{
+			
+			String id = request.getParameter("id");
+			String nome = request.getParameter("nome");
+			String login = request.getParameter("login");
+			String senha = request.getParameter("senha");
+			
+			Usuario user = new Usuario();
+			user.setId(!id.isEmpty() ? Long.parseLong(id) : 0); // Se existir um ID faz a conversï¿½o, senï¿½o vai colocar o valor 0
+			user.setNome(nome);
+			user.setLogin(login);
+			user.setSenha(senha);
+			
+			try {
+				if(id == null || id.isEmpty() && usuarioDAO.validarLogin(login)) {
+					usuarioDAO.salvar(user);
+				} else if (id != null && !id.isEmpty()){
+					usuarioDAO.atualizar(user);
+				}
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+			
+			try {
+				RequestDispatcher view = request.getRequestDispatcher("/cadastroUsuario.jsp"); // Mantem na mesma tela
+				request.setAttribute("usuarios", usuarioDAO.listarTodos()); // Carrega a lista de usuarios e coloca na variavel usuarios para ser visualizado na tela
+				view.forward(request, response);
+			} catch (SQLException e) {
+				
+				e.printStackTrace();
+			}
+			}
 		
 	}
 
