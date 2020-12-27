@@ -13,9 +13,10 @@ import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebFilter;
 
 import br.com.waldirep.connection.SingleConnection;
+import br.com.waldirep.util.LogUtil;
 
 /**
- * Classe que filtra as requisições e respostas(Intercepta)
+ * Classe que filtra as requisiï¿½ï¿½es e respostas(Intercepta)
  * @author wepbi
  *
  */
@@ -23,33 +24,31 @@ import br.com.waldirep.connection.SingleConnection;
 public class FilterAutenticacao implements Filter{
 	
 	
-	private static Connection connection;
-	
+	private Connection connection;	
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
 			throws IOException, ServletException {
 		
 		try {
-			chain.doFilter(request, response); // Intercepta os requisoções e envia as respostas
+			chain.doFilter(request, response); // Intercepta os requisoï¿½ï¿½es e envia as respostas
 			connection.commit();
 		} catch (Exception e) {
+			LogUtil.getLogger(FilterAutenticacao.class).error(e.getCause().toString());	
 			try {
 				connection.rollback();
 			} catch (SQLException e1) {
-				
-				e1.printStackTrace();
+				LogUtil.getLogger(FilterAutenticacao.class).error(e1.getCause().toString());	
 			}
 		}
-		
 	}
-	
+
 	/**
 	 * Metodo que e sempre invocado, e chama o getConnection
 	 */
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
-		connection = SingleConnection.getConnection(); // Recebe a conexão que foi iniciada
+		connection = SingleConnection.getConnection(); // Recebe a conexÃ£o que foi iniciada
 	}
 
 }
