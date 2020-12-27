@@ -25,7 +25,7 @@ public class UsuarioDAO {
 	public void salvar (Usuario usuario) {
 		
 		try {
-			String sql = "insert into usuario (login, senha, nome) values (? , ? ,?)";
+			String sql = "insert into usuario (login, senha, nome) values (? ,? ,?)";
 			
 			PreparedStatement preparedStatement = connection.prepareStatement(sql); 
 			preparedStatement.setString(1, usuario.getLogin());
@@ -148,11 +148,33 @@ public class UsuarioDAO {
 	
 	
 	
+	public boolean validarLoginUpdate(String login, String id) throws Exception {
+		String sql = "select count(1) as qtd from usuario where login = '"+ login +"' and id <> " + id;
+		
+		PreparedStatement preparedStatement = connection.prepareStatement(sql);
+		ResultSet resultado = preparedStatement.executeQuery();
+		
+		if(resultado.next()) {
+			
+			 return resultado.getInt("qtd") <= 0; // retorna false
+		}
+		
+		return false;
+	}
 	
 	
 	
-	
-	
+	public boolean validarSenha(String senha) throws Exception {
+		String sql = "select count(1) as qtd from usuario where senha='" + senha + "'";
+
+		PreparedStatement preparedStatement = connection.prepareStatement(sql);
+		ResultSet resultSet = preparedStatement.executeQuery();
+		if (resultSet.next()) {
+			
+			return resultSet.getInt("qtd") <= 0;/*Return true*/
+		}
+		return false;
+	}
 	
 	
 	

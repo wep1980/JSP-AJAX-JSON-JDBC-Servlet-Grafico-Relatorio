@@ -1,7 +1,6 @@
 package br.com.waldirep.servlet;
 
 import java.io.IOException;
-import java.sql.SQLException;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -13,100 +12,121 @@ import javax.servlet.http.HttpServletResponse;
 import br.com.waldirep.DAO.UsuarioDAO;
 import br.com.waldirep.beans.Usuario;
 
-
 @WebServlet("/salvarUsuario")
 public class UsuarioServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	
-       
-	private UsuarioDAO usuarioDAO = new UsuarioDAO();
-	
-   
-    public UsuarioServlet() {
-        super();
-      
-    }
 
-	
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-	
+	private UsuarioDAO daoUsuario = new UsuarioDAO();
+
+	public UsuarioServlet() {
+		super();
+
+	}
+
+	protected void doGet(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
 		try {
 			String acao = request.getParameter("acao");
-			String usuario = request.getParameter("usuario");
-			
-			if(acao.equalsIgnoreCase("delete")) {
-				usuarioDAO.deletar(usuario);
-				RequestDispatcher view = request.getRequestDispatcher("/cadastroUsuario.jsp"); // Mantem na mesma tela
-				request.setAttribute("usuarios", usuarioDAO.listarTodos()); // Carrega a lista de usuarios e coloca na variavel usuarios para ser visualizado na tela
+			String user = request.getParameter("user");
+
+			if (acao.equalsIgnoreCase("delete")) {
+				daoUsuario.deletar(user);
+				RequestDispatcher view = request
+						.getRequestDispatcher("/cadastroUsuario.jsp");
+				request.setAttribute("usuarios", daoUsuario.listarTodos());
+				view.forward(request, response);
+			} else if (acao.equalsIgnoreCase("editar")) {
+
+				Usuario usuario = daoUsuario.consultar(user);
+
+				RequestDispatcher view = request
+						.getRequestDispatcher("/cadastroUsuario.jsp");
+				request.setAttribute("user", usuario);
+				view.forward(request, response);
+			} else if (acao.equalsIgnoreCase("listartodos")) {
+
+				RequestDispatcher view = request
+						.getRequestDispatcher("/cadastroUsuario.jsp");
+				request.setAttribute("usuarios", daoUsuario.listarTodos());
 				view.forward(request, response);
 			}
-			else if (acao.equalsIgnoreCase("editar")) {
-				Usuario usuarioEdit = usuarioDAO.consultar(usuario);
-				RequestDispatcher view = request.getRequestDispatcher("/cadastroUsuario.jsp"); // Mantem na mesma tela
-				request.setAttribute("userEdit", usuarioEdit); // Carrega a lista de usuarios e coloca na variavel usuarios para ser visualizado na tela
-				view.forward(request, response);
-				
-			}else if(acao.equalsIgnoreCase("listarTodos")) {
-				RequestDispatcher view = request.getRequestDispatcher("/cadastroUsuario.jsp"); 
-				request.setAttribute("usuarios", usuarioDAO.listarTodos());
-				view.forward(request, response);
-			}
-			} catch (Exception e) {
-				e.printStackTrace();
+
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
+	protected void doPost(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		
 		String acao = request.getParameter("acao");
-		
-		if(acao != null && acao.equalsIgnoreCase("reset")) {
+
+		if (acao != null && acao.equalsIgnoreCase("reset")) {
 			try {
-				RequestDispatcher view = request.getRequestDispatcher("/cadastroUsuario.jsp"); // Mantem na mesma tela
-				request.setAttribute("usuarios", usuarioDAO.listarTodos()); // Carrega a lista de usuarios e coloca na variavel usuarios para ser visualizado na tela
+				RequestDispatcher view = request
+						.getRequestDispatcher("/cadastroUsuario.jsp");
+				request.setAttribute("usuarios", daoUsuario.listarTodos());
 				view.forward(request, response);
-			} catch (SQLException e) {
-				
+
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
-		}else{
-			
+		} else {
+
 			String id = request.getParameter("id");
-			String nome = request.getParameter("nome");
 			String login = request.getParameter("login");
 			String senha = request.getParameter("senha");
-			
-			Usuario user = new Usuario();
-			user.setId(!id.isEmpty() ? Long.parseLong(id) : 0); // Se existir um ID faz a convers�o, sen�o vai colocar o valor 0
-			user.setNome(nome);
-			user.setLogin(login);
-			user.setSenha(senha);
-			
+			String nome = request.getParameter("nome");
+
+			Usuario usuario = new Usuario();
+			usuario.setId(!id.isEmpty() ? Long.parseLong(id) : null);
+			usuario.setLogin(login);
+			usuario.setSenha(senha);
+			usuario.setNome(nome);
 			try {
-				if(id == null || id.isEmpty() && usuarioDAO.validarLogin(login)) {
-					usuarioDAO.salvar(user);
-				} else if (id != null && !id.isEmpty()){
-					usuarioDAO.atualizar(user);
+
+				String msg = null;
+				boolean podeInserir = true;
+
+				if (id == null || id.isEmpty()
+						&& !daoUsuario.validarLogin(login)) {//QUANDO DOR USUÁRIO NOVO
+					msg = "Usuário já existe com o mesmo login!";
+					podeInserir = false;
+
+				} else if (id == null || id.isEmpty()
+						&& !daoUsuario.validarSenha(senha)) {// QUANDO FOR USUÁRIO NOVO
+					msg = "\n A senha já existe para outro usuário!";
+					podeInserir = false;
 				}
-			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			
-			
-			try {
-				RequestDispatcher view = request.getRequestDispatcher("/cadastroUsuario.jsp"); // Mantem na mesma tela
-				request.setAttribute("usuarios", usuarioDAO.listarTodos()); // Carrega a lista de usuarios e coloca na variavel usuarios para ser visualizado na tela
-				view.forward(request, response);
-			} catch (SQLException e) {
+
+				if (msg != null) {
+					request.setAttribute("msg", msg);
+				}
+
+				if (id == null || id.isEmpty()
+						&& daoUsuario.validarLogin(login) && podeInserir) {
+
+					daoUsuario.salvar(usuario);
+
+				} else if (id != null && !id.isEmpty() && podeInserir) {
+					daoUsuario.atualizar(usuario);
+				}
 				
+				if (!podeInserir){
+					request.setAttribute("user", usuario);
+				}
+
+				RequestDispatcher view = request
+						.getRequestDispatcher("/cadastroUsuario.jsp");
+				request.setAttribute("usuarios", daoUsuario.listarTodos());
+				view.forward(request, response);
+
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			}
-		
+
+		}
+
 	}
 
 }

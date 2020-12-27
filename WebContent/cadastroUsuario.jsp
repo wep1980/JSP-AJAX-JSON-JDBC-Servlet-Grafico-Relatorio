@@ -30,48 +30,102 @@
 	
 <!--==================================== FIM CADASTRO ==============================================-->
 
-<!--==================================== INICIO DA TABELA ==========================================-->	
-
-	<link rel="stylesheet" type="text/css" href="resources/css/table-bootstrap.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="resources/css/table-animate.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="resources/css/table-select2.min.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="resources/css/table-perfect-scrollbar.css">
-<!--===============================================================================================-->
-	<link rel="stylesheet" type="text/css" href="resources/css/table-util.css">
-	<link rel="stylesheet" type="text/css" href="resources/css/table-main.css">
-	
-<!--==================================== FIM DA TABELA ============================================-->
 </head>
+
+		<style>
+		
+		   .content-table
+		   {
+		     border-collapse: collapse;
+		     font-family: monospace;
+		     margin:0;
+		     font-size: 1.0em;
+		     width: 100%;
+		     border-radius: 5px 5px 0 0;
+		     overflow: hidden;
+		     box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+		   }
+		   
+		   .content-table thead tr 
+		   {
+		     background-color: #57b846;
+		     color: #fff;
+		     text-align: left;
+		     font-weight: bold;
+		     text-transform: uppercase;
+		   }
+		   
+		   .content-table th,
+		   .content-table td
+		   {
+		      padding: 12px 15px;
+		   }
+		   
+		   .content-table tbody tr
+		   {
+		     border-bottom: 1px solid #dddddd;
+		   }
+		   
+		   .content-table tbody tr:nth-of-type(even)
+		   {
+		     background-color: #FFF0F5;
+		   }
+		   
+		   .content-table tbody tr:last-of-type
+		   {
+		     border-bottom: 15px solid #57b846;
+		   }
+		   
+		   .content-table tbody tr.active-row
+		   {
+		     font-weight: bold;
+		     color:  #57b846;
+		   }
+		   
+		</style>
+
 <body>
    <div class="container-contact100">
      <div class="wrap-contact100">
      
       <form action="salvarUsuario" method="post" class="contact100-form validate-form" id="formUser">
-         <span class="contact100-form-title">
+         <span class="contact100-form-title" style="text-transform: uppercase;
+		       font-size: 30px; font-weight: bold;">
 		   Cadastro de Usuários
+		</span> 
+		
+		<span class="contact100-form-title">
+		   <h3 style="
+		       background-color: #d40000; 
+		       color: #ffffff;
+		       text-transform: uppercase;
+		       font-size: 20px;
+		       ">${msg}</h3>
 		</span>
 		
-		<div class="wrap-input100 validate-input bg1">
-          <span class="label-input100">Código : </span>
-            <input class="input100" type="text" id="id" name="id" value="${userEdit.id}" readonly="readonly"/>
+		
+		<div>
+            <input type="hidden" id="id" name="id" value="${userEdit.id}" readonly="readonly"/>
         </div>
         
-        <div class="wrap-input100 validate-input bg1 rs1-wrap-input100" data-validate = "Enter Your name"> 
+        <div class="wrap-input100 validate-input bg1 rs1-wrap-input100"> 
          <span class="label-input100">Nome :</span>
-         <input type="text" id="nome" name="nome" value="${userEdit.nome}" class="input100" placeholder="Enter Your Name "/>
+         <input type="text" id="nome" name="nome" value="${userEdit.nome}" class="input100" placeholder="Digite seu nome "/>
        </div>  
      
-       <div class="wrap-input100 validate-input bg1 rs1-wrap-input100" data-validate = "Enter Your Login"> 
+       <div class="wrap-input100 validate-input bg1 rs1-wrap-input100"> 
          <span class="label-input100">Login :</span>
-         <input type="text" id="login" name="login" value="${userEdit.login}" class="input100" placeholder="Enter Your Login "/>
+         <input type="text" id="login" name="login" value="${userEdit.login}" class="input100" placeholder="Digite seu login "/>
        </div>  
      
-       <div class="wrap-input100 validate-input bg1 rs1-wrap-input100" data-validate = "Enter Your Login"> 
+       <div class="wrap-input100 validate-input bg1 rs1-wrap-input100"> 
          <span class="label-input100">Senha :</span>
-         <input type="text" id="senha" name="senha" value="${userEdit.senha}" class="input100" placeholder="Enter Your Senha "/>
+         <input type="text" id="senha" name="senha" value="${userEdit.senha}" class="input100" placeholder="Digite sua senha "/>
+       </div> 
+       
+        <div class="wrap-input100 validate-input bg1 rs1-wrap-input100"> 
+         <span class="label-input100">Telefone :</span>
+         <input type="text" id="telefone" name="telefone" value="${userEdit.telefone}" class="input100" placeholder="Digite seu telefone "/>
        </div> 
         
        <div class="container-contact100-form-btn">
@@ -81,8 +135,8 @@
 	   </div>
 	   
 	   <div class="container-contact100-form-btn">
-			<button type="submit" class="contact100-form-btn" onclick="document.getElementById('formUser').action = 'salvarUsuario?acao=reset'">
-			   <span>Cancelar<i class="fa fa-long-arrow-right m-l-7" aria-hidden="true"></i></span>
+			<button type="submit" class="contact100-form-btn" style="background-color: #FF0000;" onclick="document.getElementById('formUser').action = 'salvarUsuario?acao=reset'">
+			   <span style="">Cancelar<i class="fa fa-long-arrow-right m-l-7" aria-hidden="true"></i></span>
 			</button>
 	   </div>
 	   
@@ -91,47 +145,37 @@
  </div>
  </div>
 
-<div class="limiter">
- <div class="container-table100">
-   <div class="wrap-table100">
-     <div class="table100 ver5 m-b-110">
-	  <div class="table100-head">
-	    <table>
-	       <thead>
-			 <tr class="row100 head">
-			    <th class="cell100 column1">Id</th>
-				<th class="cell100 column1">Nome</th>
-				<th class="cell100 column2">Login</th>
-				<th class="cell100 column3">Senha</th>
-				<th class="cell100 column4">Editar</th>
-				<th class="cell100 column5">Excluir</th>
-			 </tr>
-		  </thead>
-	    </table>
-	  </div> 
-					
-   <div class="table100-body js-pscroll">
-	   <table>
-	     <tbody>
-	      <c:forEach items="${usuarios}" var="usuario">
-	         <tr class="row100 body">
-	           <td class="cell100 column1"><c:out value="${usuario.id}"></c:out></td>
-	           <td class="cell100 column2"><c:out value="${usuario.nome}"></c:out></td>
-	           <td class="cell100 column3"><c:out value="${usuario.login}"></c:out></td>
-	           <td class="cell100 column4"><c:out value="${usuario.senha}"></c:out></td>
-	           
-	           <td class="cell100 column5"> <a href="salvarUsuario?acao=editar&usuario=${usuario.id}">Editar</a> </td>
-	           <td class="cell100 column6"> <a  href="salvarUsuario?acao=delete&usuario=${usuario.id}">Excluir</a> </td>
-	         </tr>
-	      </c:forEach>
-	     </tbody> 
-	   </table>
-   </div>
-  </div>
-  </div>
-  </div>
-  </div>
- 
+       <table class="content-table">
+             <thead>
+		           <tr>
+				      <th>Código</th>
+				      <th>Nome</th>
+				      <th>Telefone</th>
+				      <th>Login</th>
+				      <th>Senha</th>
+				      <th>Editar</th>
+				      <th>Excluir</th>
+		           </tr>
+             </thead>
+             
+             <tbody>
+	               <c:forEach items="${usuarios}" var="user">
+	                <tr >
+	                   <td ><c:out value="${user.id}"></c:out></td>
+		               <td ><c:out value="${user.nome}"></c:out></td>
+		               <td ><c:out value="${user.telefone}"></c:out></td>
+		               <td ><c:out value="${user.login}"></c:out></td>
+		               <td ><c:out value="${user.senha}"></c:out></td>
+		               
+		               <td > <a style="text-transform: uppercase; font-size: 12px; color: #1E90FF; font-family: monospace;" href="salvarUsuario?acao=editar&usuario=${user.id}">Editar</a> </td>
+	                   <td > <a style="text-transform: uppercase; font-size: 12px; color: #FF0000; font-family: monospace;" href="salvarUsuario?acao=delete&usuario=${user.id}">Excluir</a> </td>
+	                </tr>
+	               </c:forEach> 
+             </tbody>
+       </table>
+
+  
+  
  <!--===============================================================================================-->	
 	<script src="resources/js/table-jquery-3.2.1.min.js"></script>
 <!--===============================================================================================-->

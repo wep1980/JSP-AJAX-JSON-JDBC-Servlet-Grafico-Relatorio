@@ -214,6 +214,16 @@ iframe {
   padding-bottom: 59px;
 }
 
+h3#mensagemDeErro {
+	background-color: #d40000;
+	width: 400px;
+	margin-left: auto;
+	margin-right: auto;
+	border-radius: 30px;
+	color: #ffffff;
+	padding: 6px;
+}
+
 
 
 /*------------------------------------------------------------------
@@ -288,8 +298,6 @@ textarea.input100 {
   width: 100%;
 }
 
-
-
 .contact100-form-btn {
   display: -webkit-box;
   display: -webkit-flex;
@@ -317,7 +325,6 @@ textarea.input100 {
 }
 
 
-
 .contact100-form-btn i {
   -webkit-transition: all 0.4s;
   -o-transition: all 0.4s;
@@ -325,9 +332,11 @@ textarea.input100 {
   transition: all 0.4s;
 }
 
+
 .contact100-form-btn:hover {
   background-color: #00ad5f;
 }
+
 
 .contact100-form-btn:hover i {
   -webkit-transform: translateX(10px);
@@ -336,6 +345,7 @@ textarea.input100 {
   -o-transform: translateX(10px);
   transform: translateX(10px);
 }
+
 
 /*------------------------------------------------------------------
 [ Responsive ]*/
