@@ -9,179 +9,243 @@ import java.util.List;
 
 import br.com.waldirep.beans.Usuario;
 import br.com.waldirep.connection.SingleConnection;
+import br.com.waldirep.exception.OrphanRemovalException;
+import br.com.waldirep.util.LogUtil;
 
 public class UsuarioDAO {
 	
 	
-	private static Connection connection;
-	
-	
+	private Connection connection;
+
 	public UsuarioDAO() {
 		connection = SingleConnection.getConnection();
 	}
-	
-	
-	
-	public void salvar (Usuario usuario) {
-		
+
+	public void salvar(Usuario usuario) throws SQLException {
 		try {
-			String sql = "insert into usuario (login, senha, nome) values (? ,? ,?)";
-			
-			PreparedStatement preparedStatement = connection.prepareStatement(sql); 
-			preparedStatement.setString(1, usuario.getLogin());
-			preparedStatement.setString(2, usuario.getSenha());
-			preparedStatement.setString(3, usuario.getNome());
-			preparedStatement.execute();
+			String sql = "INSERT INTO usuario (login, senha, nome, cep, rua, "
+					+ "bairro, cidade, estado, ibge, fotoBase64, contentType, "
+					+ "curriculoBase64, contentTypeCurriculo, fotoBase64Miniatura, "
+					+ "ativo, sexo, perfil) "
+					+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			try (PreparedStatement statement = connection.prepareStatement(sql)) {
+				statement.setString(1, usuario.getLogin());
+				statement.setString(2, usuario.getSenha());
+				statement.setString(3, usuario.getNome());
+				statement.setString(4, usuario.getCep());
+				statement.setString(5, usuario.getRua());
+				statement.setString(6, usuario.getBairro());
+				statement.setString(7, usuario.getCidade());
+				statement.setString(8, usuario.getEstado());
+				statement.setString(9, usuario.getIbge());
+				statement.setString(10, usuario.getFotoBase64());
+				statement.setString(11, usuario.getContentType());
+				statement.setString(12, usuario.getCurriculoBase64());
+				statement.setString(13, usuario.getContentTypeCurriculo());
+				statement.setString(14, usuario.getFotoBase64Miniatura());
+				statement.setBoolean(15, usuario.isAtivo());
+				statement.setString(16, usuario.getSexo());
+				statement.setString(17, usuario.getPerfil());
+				statement.execute();
+			}
 			connection.commit();
 		} catch (Exception e) {
-			e.printStackTrace();
-			try {
-				connection.rollback();
-
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			}
+			LogUtil.getLogger(UsuarioDAO.class).error(e.getCause().toString());
+			connection.rollback();
 		}
 	}
 	
-	
+	public List<Usuario> listarPorNome(String descricaoConsulta) throws SQLException {		
+		String sql = "SELECT * FROM usuario WHERE login <> 'admin' AND LOWER(nome) "
+				+ "LIKE LOWER('%" + descricaoConsulta + "%') ORDER BY nome";		
+		return listarUsuarios(sql);
+		
+	}
+
 	public List<Usuario> listarTodos() throws SQLException {
-		
-		List<Usuario> listaUsuarios = new ArrayList<Usuario>();
-		
-		String sql = "SELECT * FROM usuario";
-		
-		PreparedStatement preparedStatement = connection.prepareStatement(sql); 
-		ResultSet resultado = preparedStatement.executeQuery();
-		
-		while(resultado.next()) {
-		  Usuario user = new Usuario();
-		  user.setId(resultado.getLong("id"));
-		  user.setNome(resultado.getString("nome"));
-		  user.setLogin(resultado.getString("login"));
-		  user.setSenha(resultado.getString("senha"));
-		  
-		  listaUsuarios.add(user);
-		}
-		return listaUsuarios;
-		
+		String sql = "SELECT * FROM usuario WHERE login <> 'admin'";
+		return listarUsuarios(sql);
 	}
-	
-	
-	public void deletar(String id) {
-		
-		try {
-			String sql = "delete from usuario where id = '"+ id +"'";
-			PreparedStatement preparedStatement = connection.prepareStatement(sql); 
-			preparedStatement.execute();
-			connection.commit();
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			try {
-				connection.rollback();
-
-			} catch (SQLException e1) {
-				e1.printStackTrace();
+	private List<Usuario> listarUsuarios(String sql) throws SQLException {
+		List<Usuario> usuarios = new ArrayList<>();
+		try (PreparedStatement statement = connection.prepareStatement(sql)) {
+			try (ResultSet result = statement.executeQuery()) {
+				while (result.next()) {
+					Usuario usuario = new Usuario();
+					usuario.setId(result.getLong("id"));
+					usuario.setLogin(result.getString("login"));
+					usuario.setSenha(result.getString("senha"));
+					usuario.setNome(result.getString("nome"));
+					usuario.setCep(result.getString("cep"));
+					usuario.setRua(result.getString("rua"));
+					usuario.setBairro(result.getString("bairro"));
+					usuario.setCidade(result.getString("cidade"));
+					usuario.setEstado(result.getString("estado"));
+					usuario.setIbge(result.getString("ibge"));
+					usuario.setFotoBase64Miniatura(result.getString("fotoBase64Miniatura"));
+					usuario.setContentType(result.getString("contentType"));
+					usuario.setCurriculoBase64(result.getString("curriculoBase64"));
+					usuario.setContentTypeCurriculo(result.getString("contentTypeCurriculo"));
+					usuario.setAtivo(result.getBoolean("ativo"));
+					usuario.setSexo(result.getString("sexo"));
+					usuario.setPerfil(result.getString("perfil"));
+					usuarios.add(usuario);
+				}
 			}
 		}
+		return usuarios;
 	}
 
-
-
-	public Usuario consultar(String id) throws Exception {
-		String sql = "select * from usuario where id = '"+ id +"'";
-		
-		PreparedStatement preparedStatement = connection.prepareStatement(sql);
-		ResultSet resultado = preparedStatement.executeQuery();
-		
-		if(resultado.next()) {
-			 Usuario user = new Usuario();
-			 user.setId(resultado.getLong("id"));
-			 user.setLogin(resultado.getString("login"));
-			 user.setSenha(resultado.getString("senha"));
-			 user.setNome(resultado.getString("nome"));
-			 return user;
-		}
-		
-		return null;
-	}
-
-
-
-	public void atualizar(Usuario user) {
-		
+	public Boolean deletar(String id) throws OrphanRemovalException, SQLException {
 		try {
-			String sql = "update usuario set login = ?, senha = ?, nome = ? where id =" + user.getId();
+			String sql = "DELETE FROM usuario WHERE id = '" + id + "' AND login <> 'admin'";
+			try (PreparedStatement statement = connection.prepareStatement(sql)) {
+				statement.execute();
+			}
+			connection.commit();
+			return Boolean.TRUE;
+		} catch (SQLException e) {
+			connection.rollback();			
+			throw new OrphanRemovalException("Existe telefones cadastrados para o usu�rio!");
+		}
+	}
+
+	public Usuario consultarPorId(String id) throws SQLException {
+		Usuario usuario = null;		
+		String sql = "SELECT * FROM usuario WHERE id = '" + id + "' AND login <> 'admin'";
+		try (PreparedStatement statement = connection.prepareStatement(sql)) {
+			try (ResultSet result = statement.executeQuery()) {
+				if (result.next()) {
+					usuario = new Usuario();
+					usuario.setId(result.getLong("id"));
+					usuario.setLogin(result.getString("login"));
+					usuario.setSenha(result.getString("senha"));
+					usuario.setNome(result.getString("nome"));
+					usuario.setCep(result.getString("cep"));
+					usuario.setRua(result.getString("rua"));
+					usuario.setBairro(result.getString("bairro"));
+					usuario.setCidade(result.getString("cidade"));
+					usuario.setEstado(result.getString("estado"));
+					usuario.setIbge(result.getString("ibge"));
+					usuario.setFotoBase64(result.getString("fotoBase64"));
+					usuario.setFotoBase64Miniatura(result.getString("fotoBase64Miniatura"));
+					usuario.setContentType(result.getString("contentType"));
+					usuario.setCurriculoBase64(result.getString("curriculoBase64"));
+					usuario.setContentTypeCurriculo(result.getString("contentTypeCurriculo"));
+					usuario.setAtivo(result.getBoolean("ativo"));
+					usuario.setSexo(result.getString("sexo"));
+					usuario.setPerfil(result.getString("perfil"));
+				}
+			}
+		}		
+		return usuario;
+	}
+
+	public boolean validarLoginInsert(String login) throws SQLException {		
+		String sql = "SELECT COUNT(1) AS qtde FROM usuario WHERE login = '" + login + "'";
+		try (PreparedStatement statement = connection.prepareStatement(sql)) {
+			try (ResultSet result = statement.executeQuery()) {
+				if (result.next()) {
+					return result.getInt("qtde") <= 0;
+				}
+			}
+		}	
+		return false;
+	}
+
+	public boolean validarSenhaInsert(String senha) throws SQLException {		
+		String sql = "SELECT COUNT(1) AS qtde FROM usuario WHERE senha = '" + senha + "'";
+		try (PreparedStatement statement = connection.prepareStatement(sql)) {
+			try (ResultSet result = statement.executeQuery()) {
+				if (result.next()) {
+					return result.getInt("qtde") <= 0;
+				}
+			}
+		}	
+		return false;
+	}
+
+	public boolean validarLoginUpdate(String login, String id) throws SQLException {		
+		String sql = "SELECT COUNT(1) AS qtde FROM usuario WHERE login = '" + login + "' AND id <> '" + id + "'";
+		try (PreparedStatement statement = connection.prepareStatement(sql)) {
+			try (ResultSet result = statement.executeQuery()) {
+				if (result.next()) {
+					return result.getInt("qtde") <= 0;
+				}
+			}
+		}	
+		return false;
+	}
+
+	public boolean validarSenhaUpdate(String senha, String id) throws SQLException {		
+		String sql = "SELECT COUNT(1) AS qtde FROM usuario WHERE senha = '" + senha + "' AND id <> '" + id + "'";
+		try (PreparedStatement statement = connection.prepareStatement(sql)) {
+			try (ResultSet result = statement.executeQuery()) {
+				if (result.next()) {
+					return result.getInt("qtde") <= 0;
+				}
+			}
+		}		
+		return false;
+	}
+
+	public void atualizar(Usuario usuario) throws SQLException {
+		try {
+			StringBuilder sql = new StringBuilder();
+
+			sql
+			.append("UPDATE usuario SET login = ?, senha = ?, nome = ?, ")
+			.append("cep = ?, rua = ?, bairro = ?, cidade = ?, estado = ?, ibge = ?");
+
+			if (usuario.isAtualizarImagem()) {
+				sql.append(", fotoBase64 = ?, contentType = ?, fotoBase64Miniatura = ?");
+			}
+
+			if (usuario.isAtualizarCurriculo()) {
+				sql.append(", curriculoBase64 = ?, contentTypeCurriculo = ?");
+			}
 			
-			PreparedStatement preparedStatement = connection.prepareStatement(sql);
-			preparedStatement.setString(1, user.getLogin());
-			preparedStatement.setString(2, user.getSenha());
-			preparedStatement.setString(3, user.getNome());
-			preparedStatement.execute();
+			sql
+			.append(", ativo = ?, sexo = ?, perfil = ?")
+			.append(" WHERE id = " + usuario.getId());
+
+			try (PreparedStatement statement = connection.prepareStatement(sql.toString())) {
+
+				int index = 1;
+
+				statement.setString(index ++, usuario.getLogin());
+				statement.setString(index ++, usuario.getSenha());
+				statement.setString(index ++, usuario.getNome());
+				statement.setString(index ++, usuario.getCep());
+				statement.setString(index ++, usuario.getRua());
+				statement.setString(index ++, usuario.getBairro());
+				statement.setString(index ++, usuario.getCidade());
+				statement.setString(index ++, usuario.getEstado());
+				statement.setString(index ++, usuario.getIbge());
+
+				if (usuario.isAtualizarImagem()) {
+					statement.setString(index ++, usuario.getFotoBase64());
+					statement.setString(index ++, usuario.getContentType());
+					statement.setString(index ++, usuario.getFotoBase64Miniatura());
+				}
+
+				if (usuario.isAtualizarCurriculo()) {
+					statement.setString(index ++, usuario.getCurriculoBase64());
+					statement.setString(index ++, usuario.getContentTypeCurriculo());
+				}
+				
+				statement.setBoolean(index ++, usuario.isAtivo());
+				statement.setString(index ++, usuario.getSexo());
+				statement.setString(index ++, usuario.getPerfil());
+				statement.executeUpdate();
+			}
 			connection.commit();
 		} catch (Exception e) {
-			e.printStackTrace();
-			try {
-				connection.rollback();
-			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+			LogUtil.getLogger(UsuarioDAO.class).error(e.getCause().toString());
+			connection.rollback();
 		}
 	}
-	
-	
-	public boolean validarLogin(String login) throws Exception {
-		String sql = "select count(1) as qtd from usuario where login = '"+ login +"'";
-		
-		PreparedStatement preparedStatement = connection.prepareStatement(sql);
-		ResultSet resultado = preparedStatement.executeQuery();
-		
-		if(resultado.next()) {
-			
-			 return resultado.getInt("qtd") <= 0; // retorna false
-		}
-		
-		return false;
-	}
-	
-	
-	
-	public boolean validarLoginUpdate(String login, String id) throws Exception {
-		String sql = "select count(1) as qtd from usuario where login = '"+ login +"' and id <> " + id;
-		
-		PreparedStatement preparedStatement = connection.prepareStatement(sql);
-		ResultSet resultado = preparedStatement.executeQuery();
-		
-		if(resultado.next()) {
-			
-			 return resultado.getInt("qtd") <= 0; // retorna false
-		}
-		
-		return false;
-	}
-	
-	
-	
-	public boolean validarSenha(String senha) throws Exception {
-		String sql = "select count(1) as qtd from usuario where senha='" + senha + "'";
-
-		PreparedStatement preparedStatement = connection.prepareStatement(sql);
-		ResultSet resultSet = preparedStatement.executeQuery();
-		if (resultSet.next()) {
-			
-			return resultSet.getInt("qtd") <= 0;/*Return true*/
-		}
-		return false;
-	}
-	
-	
-	
-	
-	
-	
-	
 	
 	
 	

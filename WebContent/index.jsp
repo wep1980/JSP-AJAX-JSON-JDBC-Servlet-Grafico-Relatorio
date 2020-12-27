@@ -1,82 +1,40 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%> 
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %> <!-- JSTL -> Ajuda no desenvolvimento -->
+<jsp:useBean id="calcula" class="br.com.waldirep.beans.Usuario" type="br.com.waldirep.beans.Usuario" scope="page"/>
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
+<%@ taglib prefix="myprefix" uri="WEB-INF/testetag.tld" %>
+
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="ISO-8859-1">
-
-<link rel="icon" type="image/png" href="images/icons/favicon.ico"/>
-<link rel="stylesheet" type="text/css" href="resources/css/login-bootstrap.min.css">
-<link rel="stylesheet" type="text/css" href="resources/css/login-animate.css">
-<link rel="stylesheet" type="text/css" href="resources/css/login-hamburgers.min.css">
-<link rel="stylesheet" type="text/css" href="resources/css/login-animsition.min.css">
-<link rel="stylesheet" type="text/css" href="resources/css/login-select2.min.css">
-<link rel="stylesheet" type="text/css" href="resources/css/login-daterangepicker.css">
-<link rel="stylesheet" type="text/css" href="resources/css/login-util.css">
-<link rel="stylesheet" type="text/css" href="resources/css/login-main.css">
-
-<title>Login</title>
-</head>
-<body>
-
- <div class="limiter">
-     <div class="container-login100">
-	   <div class="wrap-login100">
-			   <form action="LoginServlet" method="post" class="login100-form validate-form p-l-55 p-r-55 p-t-178">
-			   
-			      <span class="login100-form-title">Sing In</span>
-			      
-			      <div class="wrap-input100 validate-input m-b-16" data-validate = "Please enter username">
-         			   <input type="text" id="login" name="login" class="input100" placeholder="Login :"/>
-			           <span class="focus-input100"></span>
-			      </div>
-			      
-			      <div class="wrap-input100 validate-input" data-validate="Please enter password">     
-			           <input type="password" id="senha" name="senha" class="input100" placeholder="Senha :"/>
-			           <span class="focus-input100"></span>
-			      </div>
-			     <br/>
-			     <br/>
-			     <div class="container-login100-form-btn">
-			         <button type="submit" value="Logar" class="login100-form-btn">
-			           Logar
-			         </button>
-			     </div>
-			      
-			     <div class="flex-col-c p-t-170 p-b-40">
-				     <a href="#" class="txt3">Sign up now</a>
-				</div>   
-			   </form>
-	     </div>
-	 </div>
- </div>
- 
- 
- <!--===============================================================================================-->
-	<script src="resources/js/login-jquery-3.2.1.min.js"></script>
-<!--===============================================================================================-->
-	<script src="resources/js/login-animsition.min.js"></script>
-<!--===============================================================================================-->
-	<script src="resources/js/login-popper.js"></script>
-	<script src="resources/js/login-bootstrap.min.js"></script>
-<!--===============================================================================================-->
-	<script src="resources/js/login-select2.min.js"></script>
-<!--===============================================================================================-->
-	<script src="resources/js/login-moment.min.js"></script>
-	<script src="resources/js/login-daterangepicker.js"></script>
-<!--===============================================================================================-->
-	<script src="resources/js/login-countdowntime.js"></script>
-<!--===============================================================================================-->
-	<script src="resources/js/login-main.js"></script>
- 
- 
- 
- 
- 
- 
- 
- 
- 
-			   
-</body>
+	<head>
+		<meta charset="UTF-8">
+		<title>Página de Login</title>
+		<link rel="stylesheet" href="resources/css/estilo.css">
+	</head>
+	<body>		
+		<div class="login-page">
+			<h3 style="text-align: center;">Projeto Didático</h3>
+			<h1 style="text-align: center;">JSP - Servlet - JDBC</h1>
+			<div style="text-align: center;">
+				<span><b>USUÁRIO:</b> admin<br/><b>SENHA:</b> admin</span>
+			</div><br>
+  			<div class="form">
+				<form action="LoginServlet" method="post" class="login-form">				
+					Login:
+					<input type="text" id="login" name="login" /><br>
+					
+					Senha:
+					<input type="text" id="senha" name="senha"  /><br>
+					
+					<button type="submit">Logar</button>		
+				</form>		
+			</div>
+			<h3 style="text-align: center;">
+				<a style="text-decoration: none;" href="https://www.jdevtreinamento.com.br/formacao-java-web-profissional">Formação Java WEB</a>
+			</h3>
+		</div>
+	</body>
 </html>
