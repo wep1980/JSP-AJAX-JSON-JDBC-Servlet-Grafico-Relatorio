@@ -25,8 +25,8 @@ public class UsuarioServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
-		String acao = request.getParameter("acao");
-		String user = request.getParameter("user");
+		String acao = request.getParameter("acao"); // Captura a acao executada na tela
+		String user = request.getParameter("user"); // Captura o usuario que esta realizando a acão
 		
 		executarAcao(acao, user, request, response);
 	}	
@@ -68,7 +68,7 @@ public class UsuarioServlet extends HttpServlet {
 				salvar(usuario);
 				
 				request.setAttribute("user", null);
-				request.setAttribute("msgSalvarAtualizar", "Usu�rio cadastrado com sucesso!");
+				request.setAttribute("msgSalvarAtualizar", "Usuário cadastrado com sucesso!"); // Envia para a tela a mensagem através do atributo -> msgSalvarAtualizar
 				
 			} else if (getValue(request, atributosUsuario[0]) != null 
 					&& !getValue(request, atributosUsuario[0]).isEmpty()) {
@@ -86,7 +86,7 @@ public class UsuarioServlet extends HttpServlet {
 					enviarImagem(request, usuario);
 					enviarCurriculo(request, usuario);
 					atualizar(usuario);	
-					request.setAttribute("msgSalvarAtualizar", "Usu�rio atualizado com sucesso!");
+					request.setAttribute("msgSalvarAtualizar", "Usuário atualizado com sucesso!");
 				}
 				
 				if (!atualizou) { 

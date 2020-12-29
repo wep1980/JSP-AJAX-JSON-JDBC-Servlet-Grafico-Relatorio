@@ -3,14 +3,17 @@
   <display-name>JSP-AJAX-JSON-JDBC-Servlet-Grafico-Relatorio</display-name>
   
   <welcome-file-list>
- 
     <welcome-file>index.jsp</welcome-file>
- 
   </welcome-file-list>
+  
+  <context-param>
+    <param-name>estado</param-name>
+    <param-value>paraná</param-value>
+  </context-param>
   
   <!-- A conexao com banco de dados e estabelicda na hora que o projeto sobe -->
   <filter> 
-    <filter-name>conexao</filter-name> 
+    <filter-name>filter</filter-name> 
     <filter-class>br.com.waldirep.filter.FilterAutenticacao</filter-class>
   </filter>
   

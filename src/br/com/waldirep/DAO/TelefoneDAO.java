@@ -26,6 +26,7 @@ public class TelefoneDAO {
 	public TelefoneDAO() {
 		connection = SingleConnection.getConnection();
 	}
+	
 
 	public void salvar(Telefone telefone) {
 		try {
@@ -46,6 +47,8 @@ public class TelefoneDAO {
 			}
 		}
 	}
+	
+	
 
 	public List<Telefone> listar() {
 		List<Telefone> telefones = new ArrayList<>();
@@ -68,6 +71,8 @@ public class TelefoneDAO {
 		}
 		return telefones;
 	}
+	
+	
 
 	public List<Telefone> listarTelefonesUsuario(Long usuario) {
 		List<Telefone> telefones = new ArrayList<>();
@@ -90,6 +95,8 @@ public class TelefoneDAO {
 		}
 		return telefones;
 	}
+	
+	
 
 	public void deletar(String id) {
 		try {
@@ -107,6 +114,8 @@ public class TelefoneDAO {
 			}
 		}
 	}
+	
+	
 
 	public Telefone consultar(String id) {
 		Telefone telefone = null;
@@ -128,6 +137,8 @@ public class TelefoneDAO {
 		}
 		return telefone;
 	}
+	
+	
 
 	public void atualizar(Telefone telefone) {
 		try {
@@ -148,5 +159,7 @@ public class TelefoneDAO {
 			}
 		}
 	}
+	
+	
 
 }

@@ -124,7 +124,7 @@ public class ProdutoServlet extends HttpServlet {
 		String msg = "";
 		
 		if (nome) {
-			msg = "J� existe um produto cadastrado com o nome " + nomeProduto + " !";
+			msg = "Já existe um produto cadastrado com o nome " + nomeProduto + " !";
 		}	
 			
 		return msg;
@@ -201,7 +201,7 @@ public class ProdutoServlet extends HttpServlet {
 	}
 	
 	private String declararMensagemParaUsuario(String campo) {
-		return "O campo " + campo.toUpperCase() + " � de preenchimento o obrigat�rio!";
+		return "O campo " + campo.toUpperCase() + "é de preenchimento obrigatório";
 	}
 
 }

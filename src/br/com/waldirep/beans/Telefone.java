@@ -1,11 +1,19 @@
 package br.com.waldirep.beans;
 
 public class Telefone {
+	
 
 	private Long id;
+	
 	private String numero;
+	
 	private String tipo;
+	
+	
 	private Long usuario;
+	
+	
+	
 
 	public Long getId() {
 		return id;

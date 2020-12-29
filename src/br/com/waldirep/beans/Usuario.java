@@ -9,15 +9,19 @@ public class Usuario implements Serializable{
 	private Long id;
 	private String login;
 	private String senha;
-	private String nome;	
+	private String nome;
+	
 	private String cep;
 	private String rua;
 	private String bairro;
 	private String cidade;
 	private String estado;
 	private String ibge;
+	
 	private boolean ativo;
+	
 	private String sexo;
+	
 	private String perfil;
 
 	private String fotoBase64;

@@ -9,8 +9,10 @@
 		<title>Cadastro de Telefone</title>
 		<link rel="stylesheet" href="resources/css/cadastro.css"/>		
 	</head>
+	
 	<a href="acessoliberado.jsp"><img alt="Início" title="Início" src="resources/img/home.png" width="30px" height="30px"></a>
 	<a href="index.jsp"><img alt="Sair" title="Sair" src="resources/img/exit.png" width="30px" height="30px"></a>
+	
 	<body>
 		<div style="text-align: center;">
 			<h1>Cadastro de Telefone</h1>
@@ -91,6 +93,7 @@
 			</c:forEach>
 		</table>
 		</div>
+		
 		<script type="text/javascript">
 			function validarCampos() {
 				if(document.getElementById("numero").value == '') {
@@ -103,5 +106,6 @@
 				return true;
 			}		
 		</script>
+		
 	</body>
 </html>

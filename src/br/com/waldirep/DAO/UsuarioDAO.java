@@ -16,10 +16,13 @@ public class UsuarioDAO {
 	
 	
 	private Connection connection;
+	
 
 	public UsuarioDAO() {
 		connection = SingleConnection.getConnection();
 	}
+	
+	
 
 	public void salvar(Usuario usuario) throws SQLException {
 		try {
@@ -55,17 +58,23 @@ public class UsuarioDAO {
 		}
 	}
 	
+	
+	
 	public List<Usuario> listarPorNome(String descricaoConsulta) throws SQLException {		
 		String sql = "SELECT * FROM usuario WHERE login <> 'admin' AND LOWER(nome) "
 				+ "LIKE LOWER('%" + descricaoConsulta + "%') ORDER BY nome";		
 		return listarUsuarios(sql);
 		
 	}
+	
+	
 
 	public List<Usuario> listarTodos() throws SQLException {
 		String sql = "SELECT * FROM usuario WHERE login <> 'admin'";
 		return listarUsuarios(sql);
 	}
+	
+	
 
 	private List<Usuario> listarUsuarios(String sql) throws SQLException {
 		List<Usuario> usuarios = new ArrayList<>();
@@ -96,6 +105,8 @@ public class UsuarioDAO {
 		}
 		return usuarios;
 	}
+	
+	
 
 	public Boolean deletar(String id) throws OrphanRemovalException, SQLException {
 		try {
@@ -110,6 +121,8 @@ public class UsuarioDAO {
 			throw new OrphanRemovalException("Existe telefones cadastrados para o usu�rio!");
 		}
 	}
+	
+	
 
 	public Usuario consultarPorId(String id) throws SQLException {
 		Usuario usuario = null;		
@@ -141,6 +154,8 @@ public class UsuarioDAO {
 		}		
 		return usuario;
 	}
+	
+	
 
 	public boolean validarLoginInsert(String login) throws SQLException {		
 		String sql = "SELECT COUNT(1) AS qtde FROM usuario WHERE login = '" + login + "'";
@@ -153,6 +168,8 @@ public class UsuarioDAO {
 		}	
 		return false;
 	}
+	
+	
 
 	public boolean validarSenhaInsert(String senha) throws SQLException {		
 		String sql = "SELECT COUNT(1) AS qtde FROM usuario WHERE senha = '" + senha + "'";
@@ -165,6 +182,8 @@ public class UsuarioDAO {
 		}	
 		return false;
 	}
+	
+	
 
 	public boolean validarLoginUpdate(String login, String id) throws SQLException {		
 		String sql = "SELECT COUNT(1) AS qtde FROM usuario WHERE login = '" + login + "' AND id <> '" + id + "'";
@@ -177,6 +196,8 @@ public class UsuarioDAO {
 		}	
 		return false;
 	}
+	
+	
 
 	public boolean validarSenhaUpdate(String senha, String id) throws SQLException {		
 		String sql = "SELECT COUNT(1) AS qtde FROM usuario WHERE senha = '" + senha + "' AND id <> '" + id + "'";
@@ -189,8 +210,11 @@ public class UsuarioDAO {
 		}		
 		return false;
 	}
+	
+	
 
 	public void atualizar(Usuario usuario) throws SQLException {
+		
 		try {
 			StringBuilder sql = new StringBuilder();
 
@@ -247,10 +271,6 @@ public class UsuarioDAO {
 		}
 	}
 	
-	
-	
-	
-	
-	
+
 
 }

@@ -18,6 +18,7 @@ import br.com.waldirep.util.LogUtil;
 @WebServlet("/salvarTelefone")
 public class TelefoneServlet extends HttpServlet {
 	
+	
 	private static final long serialVersionUID = 1L;      
 	
 	private static final UsuarioService usuarioService = new UsuarioService();
@@ -26,16 +27,18 @@ public class TelefoneServlet extends HttpServlet {
 	
 	private static final String USER_ESCOLHIDO = "userEscolhido";
 	
+	
+	
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		String user = request.getParameter("user");	
-		String acao = request.getParameter("acao");		
+		String user = request.getParameter("user"); // Captura o usuario que esta realizando a acão
+		String acao = request.getParameter("acao");	// Captura a acao executada na tela	
 		
 		try {
 			Usuario usuario = acao.equalsIgnoreCase("deletarFone") 
-				? (Usuario) request.getSession().getAttribute(USER_ESCOLHIDO) 
-				: usuarioService.consultarPorId(user);
+				? (Usuario) request.getSession().getAttribute(USER_ESCOLHIDO) // Pega o usuario logado na sessão
+				: usuarioService.consultarPorId(user); // Consulta por id 
 			redirecionarUsuario(acao, usuario, request, response);	
 		} catch (Exception e) {
 			try {
@@ -46,44 +49,57 @@ public class TelefoneServlet extends HttpServlet {
 		}	
 	}	
 	
+	
+	
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		try {
-			String numero = request.getParameter("numero");
+			String numero = request.getParameter("numero"); // Capturando por parametro o numero digitado na tela
 			String tipo = request.getParameter("tipo");	
-			Usuario usuario = (Usuario) request.getSession().getAttribute(USER_ESCOLHIDO);		
-			String acao = request.getParameter("acao");
+			Usuario usuario = (Usuario) request.getSession().getAttribute(USER_ESCOLHIDO);	// recuperando o usuario logado na sessão	
+			String acao = request.getParameter("acao"); // Capturando a acao de acordo com o botão selecionado na tela 
 			
-			if (acao != null && acao.equalsIgnoreCase("voltar")) {
-				listarTodosUsuarios(request, response);
+			if (acao != null && acao.equalsIgnoreCase("voltar")) { // Se a acao for diferente de null e for voltar, retorna para a tela anterior e carrega os usuarios
+				listarTodosUsuarios(request, response); // Lista todos os usuarios
 				return;
 			}
 			
-			if (numero == null || numero.isEmpty()) {
-				request.setAttribute("msg", "O campo telefone � de preenchimento obrigat�rio!"); 
+			if (numero == null || numero.isEmpty()) { // Se o numero do telefone for nulo ou vazio a mensagem é exibida e a lista dos telefones do usuario logado
+				request.setAttribute("msg", "O campo telefone é de preenchimento obrigatório!"); 
 				listarTodosTelefonesUsuario(usuario, request, response);
 				return;
 			}
 			
-			Telefone telefone = criarTelefone(numero, tipo, usuario.getId());
+			Telefone telefone = criarTelefone(numero, tipo, usuario.getId()); // Cria o telefone
 			
-			telefoneDAO.salvar(telefone);
-			request.setAttribute("msgSucesso", "Telefone registrado com sucesso!!!"); 		
+			telefoneDAO.salvar(telefone); // salva np BD
+			request.setAttribute("msgSucesso", "Telefone registrado com sucesso!!!"); // Mostra na tela a messagem de sucesso		
 			
-			listarTodosTelefonesUsuario(usuario, request, response);
+			listarTodosTelefonesUsuario(usuario, request, response); // Apos salvar o telefone os numeros do usuario são listados na tela 
+			
 		} catch (Exception e) {
 			LogUtil.getLogger(TelefoneServlet.class).error(e.getCause().toString());
 		} 				
 	}
 	
+	
+	
 	private void listarTodosUsuarios(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {		
-		RequestDispatcher view = request.getRequestDispatcher("/cadastroUsuario.jsp");
-		request.setAttribute("usuarios", usuarioService.listarTodos());
+		RequestDispatcher view = request.getRequestDispatcher("/cadastroUsuario.jsp"); // redireciona para a tela de cadastro de usuários
+		request.setAttribute("usuarios", usuarioService.listarTodos()); // carrega a lista de usuarios
 		view.forward(request, response);		
 	}
 	
+	
+	/**
+	 * Metodo que cria um novo Telefone
+	 * @param numero
+	 * @param tipo
+	 * @param usuario
+	 * @return
+	 */
 	private Telefone criarTelefone(String numero, String tipo, Long usuario) {
 		Telefone telefone = new Telefone();		
 		telefone.setNumero(numero);
@@ -92,16 +108,18 @@ public class TelefoneServlet extends HttpServlet {
 		return telefone;
 	}
 	
+	
+	
 	private void redirecionarUsuario(String acao, Usuario usuario, HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {	
 		
 		if (acao != null) {
 			
-			if (acao.equalsIgnoreCase("addFone")) {
+			if (acao.equalsIgnoreCase("addFone")) {  // Se a ação for para adicionar um telefone
 				listarTodosTelefonesUsuario(usuario, request, response);
 			} 
 			
-			if (acao.equalsIgnoreCase("deletarFone")) {
+			if (acao.equalsIgnoreCase("deletarFone")) { // se a ação for para deletar um telefone
 				deletarTelefone(usuario, request, response);
 			} 
 		}
@@ -109,21 +127,33 @@ public class TelefoneServlet extends HttpServlet {
 		listarTodosTelefonesUsuario(usuario, request, response);			
 	}
 	
+	
+	/**
+	 * Metodo que deleta o telefone do usuario logado
+	 * @param usuario
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
 	private void deletarTelefone(Usuario usuario, HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {	
-		String foneId = request.getParameter("foneId");
-		telefoneDAO.deletar(foneId);
-		request.setAttribute("msgSucesso", "Telefone exclu�do com sucesso!"); 
-		listarTodosTelefonesUsuario(usuario, request, response);
+		String foneId = request.getParameter("foneId"); // Pega o o id do telefone selecionado na tela
+		telefoneDAO.deletar(foneId); // deleta o telefone selecionado
+		request.setAttribute("msgSucesso", "Telefone excluído com sucesso!"); // envia a messagem para o atributo "msgSucesso" e exibe na tela
+		listarTodosTelefonesUsuario(usuario, request, response); // Lista todos os telefones do usuario que esta logado
 	}	
+	
+	
 	
 	private void listarTodosTelefonesUsuario(Usuario usuario, HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {		
-		RequestDispatcher view = request.getRequestDispatcher("/telefones.jsp");
-		request.getSession().setAttribute(USER_ESCOLHIDO, usuario);	
-		request.setAttribute(USER_ESCOLHIDO, usuario);
-		request.setAttribute("telefones", telefoneDAO.listarTelefonesUsuario(usuario.getId()));
-		view.forward(request, response);		
-	}	
+		RequestDispatcher view = request.getRequestDispatcher("/telefones.jsp"); // redireciona para a tela de telefones
+		request.getSession().setAttribute(USER_ESCOLHIDO, usuario);	// Pega o usuario logado na sessão
+		request.setAttribute(USER_ESCOLHIDO, usuario); // Mantem o mesmo usuario logado após a deleção
+		request.setAttribute("telefones", telefoneDAO.listarTelefonesUsuario(usuario.getId())); // lista na tela todos os telefones do usuario logado
+		view.forward(request, response); 		
+	}
+	
 
 }

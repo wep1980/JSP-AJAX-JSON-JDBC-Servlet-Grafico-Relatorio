@@ -9,22 +9,33 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 		<title>Cadastro de Usuário</title>
 		<link rel="stylesheet" href="resources/css/cadastro.css"/>
+		
+		<!-- Adicionando JQUERY para utilização do web service de CEP -->
 		<script src="https://code.jquery.com/jquery-3.4.1.min.js"
-            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-            crossorigin="anonymous"></script>
+                integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+                crossorigin="anonymous">
+		</script>
+            
 	</head>
+	
 	<a href="acessoliberado.jsp"><img alt="Início" title="Início" src="resources/img/home.png" width="30px" height="30px"></a>
 	<a href="index.jsp"><img alt="Sair" title="Sair" src="resources/img/exit.png" width="30px" height="30px"></a>
+	
 	<body>
 		<div style="text-align: center;">
 			<h1>Cadastro de Usuário</h1>
+			
 			<div style="color: red;">
-				<h3>${msg}</h3>
+				<h3>${msg}</h3> <!-- >${msg} -> Captura a mensagem da servlet e exibe aqui na tela -->
 			</div>
+			
 			<div style="color: green;">
-				<h3>${msgSalvarAtualizar}</h3>
+				<h3>${msgSalvarAtualizar}</h3>  <!-- >${msgSalvarAtualizar} -> Captura a mensagem da servlet e exibe aqui na tela -->
 			</div>
+			
 		</div>
+		<!-- NA MESMA TELA E FEITA TODAS AS OPERAÇÕES, GRAVAR, CONSULTAR, ATUALIZAR e DELETAR  -->
+		
 		<!-- <form action="salvarUsuario" method="post" id="formUser" enctype="multipart/form-data" onsubmit="return validarCampos() ? true : false;">-->
 		<form action="salvarUsuario" method="post" id="formUser" enctype="multipart/form-data">
 			<ul class="form-style-1">
@@ -35,6 +46,9 @@
 							<td><input type="text" readonly="readonly" id="id" name="id" value="${user.id}"/></td>	
 							
 							<td>Cep</td>
+							<!-- onblur="consultarCep()" -> chama a função java script que ao digitar o cep e clicar em outro campo ele traz as informações do CEP 
+							     id="cep" -> e capturado pela variavel da função javaScript 
+							     value="${user.cep}" -> Retorna os dados do objeto para edição, são os mesmos atributos do objeto -->
 							<td><input type="text" id="cep" name="cep" value="${user.cep}" onblur="consultarCep()" maxlength="9"/></td>	
 						</tr>						
 						<tr>
@@ -200,7 +214,7 @@
 					<td><c:out value="${user.ibge}"></c:out></td>
 					
 					<td>
-						<a href="salvarTelefone?acao=addFone&user=${user.id}">
+						<a href="salvarTelefone?acao=addFone&user=${user.id}"> <!-- acessando a servlet "salvarTelefone" -- Passando no parametro acao -- Passando o id do usuario atraves do parametro "user" que é utilizado na servlet -->
 							<img src="resources/img/fone.png" alt="Telefones" title="Telefones">
 						</a>
 					</td>
@@ -221,6 +235,8 @@
 		</table>
 		</div>
 		<script type="text/javascript">
+		
+		    // Função que valida os campos no front-end 
 			function validarCampos() {
 				if(document.getElementById("login").value == '') {
 					alert('Informe o Login!');
@@ -238,21 +254,22 @@
 				return true;
 			}
 			
+		    // Função que consulta o CEP digitado na tela e captura as informações
 			function consultarCep() {
-				var cep = $("#cep").val();
+				var cep = $("#cep").val(); // Armazenando o valor do CEP digitado na tela (JQUERY)
 				
 				//Consulta o webservice viacep.com.br/
                 $.getJSON("https://viacep.com.br/ws/"+ cep +"/json/?callback=?", function(dados) {
                 	console.log(dados);
 
-                	 if (!("erro" in dados)) {
-                        //Atualiza os campos com os valores da consulta.
+                	 //Se não houver erros atualiza os campos com os valores da consulta.
+                	 if (!("erro" in dados)) { 
                         $("#rua").val(dados.logradouro);
                         $("#bairro").val(dados.bairro);
                         $("#cidade").val(dados.localidade);
                         $("#estado").val(dados.uf);
                         $("#ibge").val(dados.ibge);
-                    } else {     
+                    } else { // Se o CEP não for encontrado o alert e exibido e os campos limpos    
                     	$("#cep").val("");
                     	$("#rua").val("");
                         $("#bairro").val("");

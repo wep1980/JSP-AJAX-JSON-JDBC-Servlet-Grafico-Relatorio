@@ -31,7 +31,7 @@ public class FilterAutenticacao implements Filter{
 			throws IOException, ServletException {
 		
 		try {
-			chain.doFilter(request, response); // Intercepta os requiso��es e envia as respostas
+			chain.doFilter(request, response); // Intercepta as requisições e envia as respostas
 			connection.commit();
 		} catch (Exception e) {
 			LogUtil.getLogger(FilterAutenticacao.class).error(e.getCause().toString());	

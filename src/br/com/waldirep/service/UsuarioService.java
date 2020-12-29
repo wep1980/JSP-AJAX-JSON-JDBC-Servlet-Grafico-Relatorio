@@ -37,14 +37,18 @@ public class UsuarioService {
 	private static final String USUARIOS_ATTRIBUTE = "usuarios";
 	
 	private static final String PAGINA_CADASTRO_USUARIO = "cadastroUsuario.jsp";
+	
+	
 
 	public void salvar(Usuario usuario) throws SQLException {
 		usuarioDAO.salvar(usuario);		
 	}
+	
 
 	private Boolean deletar(String id) throws OrphanRemovalException, SQLException {
 		return usuarioDAO.deletar(id);		
 	}
+	
 	
 	private void validarUsuario(String user, HttpServletRequest request) {
 		Usuario usuario = consultarPorId(user);
@@ -52,7 +56,8 @@ public class UsuarioService {
 			request.setAttribute("msg", "Existe telefones cadastrados para o usuário " + 
 				usuario.getNome());
 		}
-	}		
+	}	
+	
 	
 	private void editarUsuarioRedirecionar(String user, HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {		
@@ -61,15 +66,18 @@ public class UsuarioService {
 		redirecionarUsuario(attributes, request, response, STRING_VAZIA, usuario, PAGINA_CADASTRO_USUARIO);						
 	}
 	
+	
 	public void listarTodosUsuariosRedirecionar(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {		
 		String[] attributes = {USUARIOS_ATTRIBUTE};
 		redirecionarUsuario(attributes, request, response, STRING_VAZIA, new Usuario(), PAGINA_CADASTRO_USUARIO);		
 	}
+	
 
 	public void atualizar(Usuario usuario) throws SQLException {
 		usuarioDAO.atualizar(usuario);
 	}
+	
 	
 	public Usuario criarUsuario(HttpServletRequest request, String[] dadosUsuario) {		
 		Usuario usuario = new Usuario();			
@@ -89,6 +97,7 @@ public class UsuarioService {
 		usuario.setPerfil(getValue(request, dadosUsuario[12]));	
 		return usuario;		
 	}
+	
 
 	public Usuario consultarPorId(String id) {
 		Usuario usuario = null;
@@ -100,6 +109,7 @@ public class UsuarioService {
 		return usuario;
 	}
 	
+	
 	public List<Usuario> listarPorNome(String descricaoConsulta) {
 		List<Usuario> usuarios = null;
 		try {
@@ -109,6 +119,7 @@ public class UsuarioService {
 		}
 		return usuarios;
 	}
+	
 
 	public List<Usuario> listarTodos() {
 		List<Usuario> usuarios = null;
@@ -120,6 +131,7 @@ public class UsuarioService {
 		return usuarios;
 	}
 	
+	
 	private void redirecionarUsuarioValidarCamposFormulario(Usuario usuario, String campo, 
 			HttpServletRequest request, HttpServletResponse response) {	
 		String[] attributes = {USUARIOS_ATTRIBUTE, "msg", "user"};
@@ -130,9 +142,11 @@ public class UsuarioService {
 		}					
 	}
 	
+	
 	public String getValue(HttpServletRequest request, String valor) {
 		return request.getParameter(valor);
 	}
+	
 	
 	public void validarCamposFormulario(String[] dadosUsuario,
 			HttpServletRequest request, HttpServletResponse response, Usuario usuario) {		
@@ -147,6 +161,7 @@ public class UsuarioService {
 			return;
 		} 
 	}	
+	
 
 	public void enviarImagem(HttpServletRequest request, Usuario usuario) throws IOException, ServletException {
 		if (ServletFileUpload.isMultipartContent(request)) {
@@ -165,6 +180,7 @@ public class UsuarioService {
 			}
 		}
 	}
+	
 
 	// Converte a entrada de fluxo de dados da imagem para byte[]
 	private byte[] converteStremParaByte(InputStream imagem) throws IOException {
@@ -201,6 +217,7 @@ public class UsuarioService {
 
 		return miniaturaBase64;
 	}
+	
 
 	private String criarMiniaturaImagem(String fotoBase64) {
 		try {
@@ -210,6 +227,7 @@ public class UsuarioService {
 		}
 		return STRING_VAZIA;
 	}
+	
 
 	public void enviarCurriculo(HttpServletRequest request, Usuario usuario) throws IOException, ServletException {
 		if (ServletFileUpload.isMultipartContent(request)) {
@@ -226,34 +244,42 @@ public class UsuarioService {
 			}
 		}
 	}
+	
 
 	private String declararMensagemParaUsuario(String campo) {
 		return "O campo " + campo.toUpperCase() + "é de preenchimento obrigatório";
 	}
+	
 
 	public boolean validarLoginInsert(String id, String login) throws SQLException {
 		return id == null || id.isEmpty() && !usuarioDAO.validarLoginInsert(login);
 	}
+	
 
 	public boolean validarLoginInsert(String login) throws SQLException {
 		return usuarioDAO.validarLoginInsert(login);
 	}
+	
 
 	public boolean validarSenhaInsert(String id, String senha) throws SQLException {
 		return id == null || id.isEmpty() && !usuarioDAO.validarSenhaInsert(senha);
 	}
+	
 
 	public boolean validarSenhaInsert(String senha) throws SQLException {
 		return usuarioDAO.validarSenhaInsert(senha);
 	}
+	
 
 	public boolean validarLoginUpdate(String id, String login) throws SQLException {
 		return !usuarioDAO.validarLoginUpdate(login, id);
 	}
+	
 
 	public boolean validarSenhaUpdate(String id, String senha) throws SQLException {
 		return !usuarioDAO.validarSenhaUpdate(senha, id);
 	}
+	
 
 	private void redirecionarUsuario(String[] attributes, HttpServletRequest request, HttpServletResponse response,
 			String campo, Usuario usuario, String pagina) throws ServletException, IOException {
@@ -271,6 +297,7 @@ public class UsuarioService {
 		}
 		view.forward(request, response);
 	}
+	
 	
 	public void executarAcao(String acao, String user, HttpServletRequest request, 
 			HttpServletResponse response) throws IOException, ServletException, SQLException {		
@@ -300,6 +327,7 @@ public class UsuarioService {
 		}		
 	}
 	
+	
 	private Boolean deletarUsuario(String user) throws SQLException {		
 		Boolean usuarioDeletado = Boolean.FALSE;
 		try {
@@ -310,6 +338,7 @@ public class UsuarioService {
 		return usuarioDeletado;
 	}
 	
+	
 	private void deletarUsuarioRedirecionar(String user, HttpServletRequest request, HttpServletResponse response,
 			String[] attributesDeletarUsuario) throws ServletException, IOException, SQLException {
 		if (deletarUsuario(user) != null) {
@@ -318,9 +347,11 @@ public class UsuarioService {
 		validarUsuario(user, request);
 	}	
 	
+	
 	private Boolean verificarStatus(String ativo) {
 		return ativo != null && ativo.equalsIgnoreCase("on");
 	}
+	
 	
 	public String definirMensagem(boolean login, boolean senha) {
 		
@@ -339,6 +370,7 @@ public class UsuarioService {
 		}		
 		return msg;
 	}
+	
 
 	private void fazerDownload(String user, HttpServletRequest request, HttpServletResponse response) throws IOException {
 
@@ -375,5 +407,6 @@ public class UsuarioService {
 			os.close();			
 		}
 	}
+	
 
 }
