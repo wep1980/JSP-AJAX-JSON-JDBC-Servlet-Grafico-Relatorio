@@ -9,7 +9,7 @@ import java.util.List;
 
 import br.com.waldirep.beans.Categoria;
 import br.com.waldirep.beans.Produto;
-import br.com.waldirep.connection.SingleConnection;
+import br.com.waldirep.connection.SingleConnectionHeroku;
 import br.com.waldirep.util.LogUtil;
 
 public class ProdutoDAO {
@@ -18,7 +18,7 @@ public class ProdutoDAO {
 private Connection connection;
 	
 	public ProdutoDAO() {
-		connection = SingleConnection.getConnection();
+		connection = SingleConnectionHeroku.getConnection();
 	}
 	
 	public void salvar(Produto produto) {

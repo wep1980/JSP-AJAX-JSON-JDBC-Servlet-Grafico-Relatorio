@@ -14,12 +14,15 @@ import br.com.waldirep.service.UsuarioService;
 import br.com.waldirep.util.LogUtil;
 
 @WebServlet("/salvarUsuario")
-@MultipartConfig
+@MultipartConfig // Anotação para trabalhar com upload de arquivo
 public class UsuarioServlet extends HttpServlet {
+	
 	
 	private static final long serialVersionUID = 1L; 
 	
 	private static final UsuarioService usuarioService = new UsuarioService();
+	
+	
    
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -31,6 +34,8 @@ public class UsuarioServlet extends HttpServlet {
 		executarAcao(acao, user, request, response);
 	}	
 	
+	
+	
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {		
 		
@@ -39,7 +44,8 @@ public class UsuarioServlet extends HttpServlet {
 		String[] atributosUsuario = {"id", "login", "senha", "nome", "cep", "rua", "bairro", "cidade", "estado", "ibge", "ativo", "sexo", "perfil"};
 		
 		if (acao != null && acao.equalsIgnoreCase("reset")) {
-			listarTodosUsuariosRedirecionar(request, response);				
+			listarTodosUsuariosRedirecionar(request, response);	
+			
 		} else {				
 			Usuario usuario = usuarioService.criarUsuario(request, atributosUsuario);			
 
@@ -95,10 +101,13 @@ public class UsuarioServlet extends HttpServlet {
 				} else {
 					request.setAttribute("user", null);
 				}
-			}				
+			}	
+			
 			listarTodosUsuariosRedirecionar(request, response);
 		}	
 	}	
+	
+	
 	
 	public void salvar(Usuario usuario) {
 		try {
@@ -108,6 +117,8 @@ public class UsuarioServlet extends HttpServlet {
 		}
 	}	
 	
+	
+	
 	private void atualizar(Usuario usuario) {
 		try {
 			usuarioService.atualizar(usuario);
@@ -115,6 +126,8 @@ public class UsuarioServlet extends HttpServlet {
 			LogUtil.getLogger(UsuarioServlet.class).error(e.getCause().toString());
 		}
 	}	
+	
+	
 	
 	private void executarAcao(String acao, String user, HttpServletRequest request, HttpServletResponse response) {
 		try {
@@ -124,13 +137,17 @@ public class UsuarioServlet extends HttpServlet {
 		}
 	}	
 	
+	
+	
 	private void listarTodosUsuariosRedirecionar(HttpServletRequest request, HttpServletResponse response) {	
 		try {
 			usuarioService.listarTodosUsuariosRedirecionar(request, response);
 		} catch (Exception e) {
 			LogUtil.getLogger(UsuarioServlet.class).error(e.getCause().toString());
 		}			
-	}		
+	}	
+	
+	
 	
 	private void enviarImagem(HttpServletRequest request, Usuario usuario) {
 		try {
@@ -140,6 +157,8 @@ public class UsuarioServlet extends HttpServlet {
 		}
 	}
 	
+	
+	
 	private void enviarCurriculo(HttpServletRequest request, Usuario usuario) {
 		try {
 			usuarioService.enviarCurriculo(request, usuario);
@@ -148,11 +167,16 @@ public class UsuarioServlet extends HttpServlet {
 		}
 	}
 	
+	
+	
 	private String getValue(HttpServletRequest request, String valor) {
 		return usuarioService.getValue(request, valor);
 	}
 	
+	
+	
 	private boolean validarLoginInsert(String id, String login) {
+		
 		Boolean loginValido = Boolean.FALSE;
 		try {
 			loginValido = usuarioService.validarLoginInsert(id, login);			
@@ -162,7 +186,10 @@ public class UsuarioServlet extends HttpServlet {
 		return loginValido;
 	}
 
-	private boolean validarLoginInsert(String login) {		
+	
+	
+	private boolean validarLoginInsert(String login) {	
+		
 		Boolean loginValido = Boolean.FALSE;
 		try {
 			loginValido = usuarioService.validarLoginInsert(login);			
@@ -171,17 +198,24 @@ public class UsuarioServlet extends HttpServlet {
 		}
 		return loginValido;		
 	}
+	
+	
 
 	private boolean validarSenhaInsert(String id, String senha) {
+		
 		Boolean loginValido = Boolean.FALSE;
 		try {
 			loginValido = usuarioService.validarSenhaInsert(id, senha);
 		} catch (Exception e) {
 			LogUtil.getLogger(UsuarioServlet.class).error(e.getCause().toString());
 		}
-		return loginValido;		}
+		return loginValido;	
+		}
+	
+	
 
 	private boolean validarSenhaInsert(String senha) {
+		
 		Boolean loginValido = Boolean.FALSE;
 		try {
 			loginValido = usuarioService.validarSenhaInsert(senha);
@@ -190,8 +224,11 @@ public class UsuarioServlet extends HttpServlet {
 		}
 		return loginValido;	
 	}
+	
+	
 
 	private boolean validarLoginUpdate(String id, String login) {
+		
 		Boolean loginValido = Boolean.FALSE;
 		try {
 			loginValido = usuarioService.validarLoginUpdate(id, login);
@@ -200,8 +237,11 @@ public class UsuarioServlet extends HttpServlet {
 		}
 		return loginValido;	
 	}
+	
+	
 
 	private boolean validarSenhaUpdate(String id, String senha) {
+		
 		Boolean loginValido = Boolean.FALSE;
 		try {
 			loginValido = usuarioService.validarSenhaUpdate(id, senha);			

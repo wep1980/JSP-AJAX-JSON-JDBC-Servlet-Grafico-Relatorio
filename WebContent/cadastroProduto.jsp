@@ -2,19 +2,22 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %> <!-- Declaração JSTL para formatação de valores, utilizado na tabela dessa pagina -->
 
 <!DOCTYPE html>
 <html>
 	<head>
 		<meta charset="UTF-8">
 		<title>Cadastro de Produto</title>
+		
 		<link rel="stylesheet" href="resources/css/cadastro.css"/>
 		<script src="resources/js/jquery.min.js" type="text/javascript"></script>
   		<script src="resources/js/jquery.maskMoney.min.js" type="text/javascript"></script>
 	</head>
+	
 	<a href="acessoliberado.jsp"><img alt="Início" title="Início" src="resources/img/home.png" width="30px" height="30px"></a>
 	<a href="index.jsp"><img alt="Sair" title="Sair" src="resources/img/exit.png" width="30px" height="30px"></a>
+	
 	<body>
 		<div style="text-align: center;">
 			<h1>Cadastro de Produto</h1>
@@ -22,6 +25,7 @@
 				<h3>${msg}</h3>
 			</div>
 		</div>
+		
 		<!-- <form action="salvarProduto" method="post" id="formProd" onsubmit="return validarCampos() ? true : false;">-->
 		<form action="salvarProduto" method="post" id="formProd">
 			<ul class="form-style-1">
@@ -50,6 +54,7 @@
 						<tr>
 							<td>Valor</td>
 							<td>
+							    <!-- Por padrão o java invoca os metodos get Para mostrar na tela, value="${prod.valorTexto}" -> valorTexto - metodo da classe Produto -->
 								<input type="text" id="valor" name="valor" value="${prod.valorTexto}" maxlength="10"
 									data-thousands="." data-decimal="," data-prefix="R$"/>
 							</td>	
@@ -87,6 +92,7 @@
 				</li>
 			</ul>
 		</form>
+		
 		<div class="container">		
 		<table class="responsive-table" border="1">		
 		<caption>Lista de Produtos</caption>	
@@ -103,8 +109,9 @@
 					<td><c:out value="${prod.id}"></c:out></td>
 					<td><c:out value="${prod.nome}"></c:out></td>
 					<td><c:out value="${prod.quantidade}"></c:out></td>
-					<td><fmt:formatNumber type="number" maxFractionDigits="6"
-						value="${prod.valor}"/></td>
+					
+					<!-- fmt:formatNumber type="number" maxFractionDigits="6" -> Formatação de exibição de valor na tela -->
+					<td><fmt:formatNumber type="number" maxFractionDigits="6" value="${prod.valor}"/></td>
 					
 					<td>
 						<a href="salvarProduto?acao=deletar&prod=${prod.id}" onclick="return confirm('Tem certeza que deseja excluir?');">
@@ -121,6 +128,7 @@
 			</c:forEach>
 		</table>
 		</div>
+		
 		<script type="text/javascript">
 			function validarCampos() {
 				if(document.getElementById("nome").value == '') {
@@ -136,8 +144,12 @@
 				return true;
 			}
 		</script>
+		
 	</body>
+	
 	<script>
+	
+	// Função JavaScript que cria a mascara no campo valor
 	  $(function() {
 	    $('#valor').maskMoney();
 	  })
@@ -148,4 +160,5 @@
 		  });
 	  });
 	</script>
+	
 </html>

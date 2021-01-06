@@ -49,9 +49,17 @@ public class Produto {
 		this.categoria = categoria;
 	}
 
+	
+	/**
+	 * Metodo que auxilia no campo valor, transofrma o valor double para string
+	 * e retira o .(ponto) e coloca a ,(virgula)
+	 * @return
+	 */
 	public String getValorTexto() {
 		return Double.toString(valor).replace(".", ",");
 	}
+	
+	
 
 	@Override
 	public int hashCode() {

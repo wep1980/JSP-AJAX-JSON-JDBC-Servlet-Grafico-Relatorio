@@ -60,8 +60,9 @@ public class TelefoneServlet extends HttpServlet {
 			Usuario usuario = (Usuario) request.getSession().getAttribute(USER_ESCOLHIDO);	// recuperando o usuario logado na sessão	
 			String acao = request.getParameter("acao"); // Capturando a acao de acordo com o botão selecionado na tela 
 			
+			// O campo de voltar esta no POST que o formulario esta sendo submetido
 			if (acao != null && acao.equalsIgnoreCase("voltar")) { // Se a acao for diferente de null e for voltar, retorna para a tela anterior e carrega os usuarios
-				listarTodosUsuarios(request, response); // Lista todos os usuarios
+				listarTodosUsuarios(request, response); // Redireciona para tela de usuarios e lista todos eles
 				return;
 			}
 			
@@ -84,9 +85,17 @@ public class TelefoneServlet extends HttpServlet {
 	}
 	
 	
-	
+	/**
+	 * Metodo que redireciona e carrega a lista de usuarios 
+	 * 
+	 * @param request
+	 * @param response
+	 * @throws ServletException
+	 * @throws IOException
+	 */
 	private void listarTodosUsuarios(HttpServletRequest request, HttpServletResponse response) 
-			throws ServletException, IOException {		
+			throws ServletException, IOException {	
+		
 		RequestDispatcher view = request.getRequestDispatcher("/cadastroUsuario.jsp"); // redireciona para a tela de cadastro de usuários
 		request.setAttribute("usuarios", usuarioService.listarTodos()); // carrega a lista de usuarios
 		view.forward(request, response);		

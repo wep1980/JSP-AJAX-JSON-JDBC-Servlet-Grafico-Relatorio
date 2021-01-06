@@ -23,6 +23,7 @@
 				<h3>${msgSucesso}</h3>
 			</div>
 		</div>
+		
 		<!-- <form action="salvarTelefone" method="post" id="formFone" onsubmit="return validarCampos() ? true : false;">-->
 		<form action="salvarTelefone" method="post" id="formFone">
 			<ul class="form-style-1">
@@ -60,6 +61,8 @@
 							<td></td>
 							<td>
 								<input type="submit" value="Salvar" style="width: 87px;">
+								
+								<!-- document.getElementById('formFone') -> Pegando o id do formulario -- action = 'salvarTelefone?acao=voltar' -> passando pelo parametro de acao o voltar -->
 								<input type="submit" value="Voltar" style="width: 87px;" onclick="document.getElementById('formFone').action = 'salvarTelefone?acao=voltar'">
 							</td>							
 						</tr>

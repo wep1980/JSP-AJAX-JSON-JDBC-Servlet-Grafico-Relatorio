@@ -163,63 +163,113 @@ public class UsuarioService {
 	}	
 	
 
+
+	/**
+	 * Metodo que grava a imagem no banco de dados
+	 * 
+	 * @param request
+	 * @param usuario
+	 * @throws IOException
+	 * @throws ServletException
+	 */
 	public void enviarImagem(HttpServletRequest request, Usuario usuario) throws IOException, ServletException {
-		if (ServletFileUpload.isMultipartContent(request)) {
+		
+		if (ServletFileUpload.isMultipartContent(request)) { // Valida se é um formulario de upload
 
-			Part imagemFoto = request.getPart("foto");
+			Part imagemFoto = request.getPart("foto"); // Pegando a imagem do campo da foto
 
-			if (imagemFoto != null && imagemFoto.getInputStream().available() > 0) {
+			if (imagemFoto != null && imagemFoto.getInputStream().available() > 0) { // Se for uma imagem nova
 
 				String fotoBase64 = Base64.encodeBase64String(converteStremParaByte(imagemFoto.getInputStream()));
 
-				usuario.setFotoBase64(fotoBase64);
+				usuario.setFotoBase64(fotoBase64); 
 				usuario.setContentType(imagemFoto.getContentType());
-				usuario.setFotoBase64Miniatura(criarMiniaturaImagem(fotoBase64));
+				usuario.setFotoBase64Miniatura(criarMiniaturaImagem(fotoBase64)); // Gravando a miniatura da imagem
+				
 			} else {
-				usuario.setAtualizarImagem(Boolean.FALSE);
+				usuario.setAtualizarImagem(Boolean.FALSE); // Se não for uma imagem nova mantem a mesma
 			}
 		}
 	}
 	
+	
+	
+	/**
+	 * Metodo que grava a PDF no banco de dados
+	 * 
+	 * @param request
+	 * @param usuario
+	 * @throws IOException
+	 * @throws ServletException
+	 */
+	public void enviarCurriculo(HttpServletRequest request, Usuario usuario) throws IOException, ServletException {
+			
+			if (ServletFileUpload.isMultipartContent(request)) {
+	
+				Part curriculo = request.getPart("curriculo");
+	
+				if (curriculo != null && curriculo.getInputStream().available() > 0) {
+					String curriculoBase64 = Base64.encodeBase64String(converteStremParaByte(curriculo.getInputStream()));
+	
+					usuario.setCurriculoBase64(curriculoBase64);
+					usuario.setContentTypeCurriculo(curriculo.getContentType());
+				} else {
+					usuario.setAtualizarCurriculo(Boolean.FALSE);
+				}
+			}
+		}
+	
 
 	// Converte a entrada de fluxo de dados da imagem para byte[]
 	private byte[] converteStremParaByte(InputStream imagem) throws IOException {
+		
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		int reads = imagem.read();
 		while (reads != -1) {
 			baos.write(reads);
 			reads = imagem.read();
 		}
-		return baos.toByteArray();
+		return baos.toByteArray(); // retorna(transforma) o fluxo em array de bytes
 	}
+	
 
+	/**
+	 * Metodo que cria as imagens em miniatura para serem carregadas na tela
+	 * @param fotoBase64
+	 * @return
+	 * @throws IOException
+	 */
 	private String processarCriacaoMiniaturaImagem(String fotoBase64) throws IOException {
+		
 		String miniaturaBase64 = "";
 
-		byte[] imageByteDecode = Base64.decodeBase64(fotoBase64);
+		byte[] imageByteDecode = Base64.decodeBase64(fotoBase64); // Decodificando a imagem que veio do formulario 
 
-		BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(imageByteDecode));
+		BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(imageByteDecode)); // Transformando a imagem em fluxo de entrada de arrays
+		
+		// Tipo da Imagem, se não tiver nenhum tipo definido da imagem ela sera do tipo YPE_INT_ARGB, senão pega o tipo da imagem que ja existe
+		int type = bufferedImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : bufferedImage.getType(); 
 
-		int type = bufferedImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : bufferedImage.getType();
+		BufferedImage resizedImage = new BufferedImage(100, 100, type); // Define o tamanho da imagem, largura - Altura e Tipo
 
-		BufferedImage resizedImage = new BufferedImage(100, 100, type);
+		Graphics2D g = resizedImage.createGraphics(); // Iniciando o processo de criação da miniatura
 
-		Graphics2D g = resizedImage.createGraphics();
+		g.drawImage(bufferedImage, 0, 0, 100, 100, null); // Transformando a imagem em miniatura
 
-		g.drawImage(bufferedImage, 0, 0, 100, 100, null);
+		g.dispose(); // Finaliza o processo
 
-		g.dispose();
-
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		ByteArrayOutputStream baos = new ByteArrayOutputStream(); // Escrevendo a imagem na saida
 		ImageIO.write(resizedImage, "png", baos);
 
-		miniaturaBase64 = "data:image/png;base64," + DatatypeConverter.printBase64Binary(baos.toByteArray());
+		// Gravando a miniatura no banco de dados pronta para ser exibida na tela
+		miniaturaBase64 = "data:image/png;base64," + DatatypeConverter.printBase64Binary(baos.toByteArray()); 
 
 		return miniaturaBase64;
 	}
 	
 
 	private String criarMiniaturaImagem(String fotoBase64) {
+		
 		try {
 			return processarCriacaoMiniaturaImagem(fotoBase64);
 		} catch (IOException e) {
@@ -229,19 +279,49 @@ public class UsuarioService {
 	}
 	
 
-	public void enviarCurriculo(HttpServletRequest request, Usuario usuario) throws IOException, ServletException {
-		if (ServletFileUpload.isMultipartContent(request)) {
-
-			Part curriculo = request.getPart("curriculo");
-
-			if (curriculo != null && curriculo.getInputStream().available() > 0) {
-				String curriculoBase64 = Base64.encodeBase64String(converteStremParaByte(curriculo.getInputStream()));
-
-				usuario.setCurriculoBase64(curriculoBase64);
-				usuario.setContentTypeCurriculo(curriculo.getContentType());
-			} else {
-				usuario.setAtualizarCurriculo(Boolean.FALSE);
+	
+	/**
+	 * Método que faz download do arquivo (foto , ou PDF)
+	 * 
+	 * @param user
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
+	private void fazerDownload(String user, HttpServletRequest request, HttpServletResponse response) throws IOException {
+		
+		Usuario usuario = consultarPorId(user); // Consulta o usuario por ID
+		
+		if (usuario != null) {
+			
+			String contentType = "";
+			byte[] fileBytes = null; // array de bytes
+			String tipo = request.getParameter("tipo"); // Pega o tipo de arquivo que usuario clicou na tela
+			
+			if (tipo.equalsIgnoreCase("foto")) {
+				contentType = usuario.getContentType();
+				fileBytes = Base64.decodeBase64(usuario.getFotoBase64()); // Colocando a foto em um array de bates
 			}
+			
+			if (tipo.equalsIgnoreCase("curriculo")) {
+				contentType = usuario.getContentTypeCurriculo();
+				fileBytes = Base64.decodeBase64(usuario.getCurriculoBase64()); // Colocando o PDF em um array de bates
+			}
+			
+			// Baixa a imagem diretamente. split("\\/")[1] -> regex que quebra o texto depois da / e armazena na posição do [1] do array a parte quebrada
+			response.setHeader("Content-Disposition", "attachment;filename=arquivo." + contentType.split("\\/")[1]); // filename -> nome do arquivo
+			
+			InputStream is = new ByteArrayInputStream(fileBytes); // Colocando o arquivo que esta em forma de bytes em um inputStream(Objeto de entrada) para ser processado
+			int read = 0; // Faz o controle do fluxo
+			byte[] bytes = new byte[1024]; // Byte de saida com tamanho padrão
+			
+			
+			OutputStream os = response.getOutputStream(); // Saida do fluxo(arquivo) para o navegador na resposta
+			while ((read = is.read(bytes)) != -1) { // Enquanto tiver conteúdo o arquivo sera lido
+				os.write(bytes, 0, read); // escreve no objeto de saida que começa em 0 e vai ate o fim do tamanho do read
+			}
+			os.flush(); // finaliza
+			os.close();	// fecha o fluxo		
 		}
 	}
 	
@@ -283,7 +363,9 @@ public class UsuarioService {
 
 	private void redirecionarUsuario(String[] attributes, HttpServletRequest request, HttpServletResponse response,
 			String campo, Usuario usuario, String pagina) throws ServletException, IOException {
+		
 		RequestDispatcher view = request.getRequestDispatcher("/" + pagina);
+		
 		for (String attribute : attributes) {
 			if (attribute.equals(USUARIOS_ATTRIBUTE)) {
 				request.setAttribute(USUARIOS_ATTRIBUTE, listarTodos());
@@ -329,6 +411,7 @@ public class UsuarioService {
 	
 	
 	private Boolean deletarUsuario(String user) throws SQLException {		
+		
 		Boolean usuarioDeletado = Boolean.FALSE;
 		try {
 			usuarioDeletado = deletar(user);
@@ -341,6 +424,7 @@ public class UsuarioService {
 	
 	private void deletarUsuarioRedirecionar(String user, HttpServletRequest request, HttpServletResponse response,
 			String[] attributesDeletarUsuario) throws ServletException, IOException, SQLException {
+		
 		if (deletarUsuario(user) != null) {
 			redirecionarUsuario(attributesDeletarUsuario, request, response, STRING_VAZIA, new Usuario(), PAGINA_CADASTRO_USUARIO);			
 		}
@@ -372,41 +456,7 @@ public class UsuarioService {
 	}
 	
 
-	private void fazerDownload(String user, HttpServletRequest request, HttpServletResponse response) throws IOException {
-
-		Usuario usuario = consultarPorId(user);
-
-		if (usuario != null) {
-
-			String contentType = "";
-			byte[] fileBytes = null;
-			String tipo = request.getParameter("tipo");
-
-			if (tipo.equalsIgnoreCase("foto")) {
-				contentType = usuario.getContentType();
-				fileBytes = Base64.decodeBase64(usuario.getFotoBase64());
-			}
-
-			if (tipo.equalsIgnoreCase("curriculo")) {
-				contentType = usuario.getContentTypeCurriculo();
-				fileBytes = Base64.decodeBase64(usuario.getCurriculoBase64());
-			}
-
-			response.setHeader("Content-Disposition", "attachment;filename=arquivo." + contentType.split("\\/")[1]);
-
-			InputStream is = new ByteArrayInputStream(fileBytes);
-			int read = 0;
-			byte[] bytes = new byte[1024];
-
-			
-			OutputStream os = response.getOutputStream();
-			while ((read = is.read(bytes)) != -1) {
-				os.write(bytes, 0, read);
-			}
-			os.flush();
-			os.close();			
-		}
-	}
+	
 	
 
 }

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.waldirep.beans.Telefone;
-import br.com.waldirep.connection.SingleConnection;
+import br.com.waldirep.connection.SingleConnectionHeroku;
 import br.com.waldirep.util.LogUtil;
 
 public class TelefoneDAO {
@@ -24,7 +24,7 @@ public class TelefoneDAO {
 	
 
 	public TelefoneDAO() {
-		connection = SingleConnection.getConnection();
+		connection = SingleConnectionHeroku.getConnection();
 	}
 	
 

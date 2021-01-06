@@ -29,6 +29,10 @@ public class ProdutoServlet extends HttpServlet {
 	
 	private static final String PAGINA_CADASTRO_PRODUTO = "/cadastroProduto.jsp";
 	
+	
+	
+	
+	
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
@@ -42,6 +46,8 @@ public class ProdutoServlet extends HttpServlet {
 			LogUtil.getLogger(ProdutoServlet.class).error(e.getCause().toString());
 		} 
 	}
+	
+	
 	
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {		
@@ -97,27 +103,56 @@ public class ProdutoServlet extends HttpServlet {
 		} 
 	}
 	
+	
+	
+	
 	private boolean validarNomeInsert(String id, String nome) {
 		return id == null || id.isEmpty() && !produtoDAO.validarNomeInsert(nome);
 	}
+	
+	
+	
 	
 	private boolean validarNomeUpdate(String id, String nome) {
 		return !produtoDAO.validarNomeUpdate(nome, id);
 	}
 	
+	
+	
+	/**
+	 * Metodo que cria produto
+	 * 
+	 * @param id
+	 * @param nome
+	 * @param quantidade
+	 * @param valor
+	 * @param categoria
+	 * @return
+	 */
 	private Produto criarProduto(String id, String nome, String quantidade,
 			String valor, String categoria) {
+		
 		Produto produto = new Produto();
 		produto.setId(!id.isEmpty() ? Long.parseLong(id) : null);
 		produto.setNome(nome);
+		
 		if((quantidade != null && !quantidade.isEmpty()) && (valor != null && !valor.isEmpty())) {
+			
+			/**
+			 * replaceAll("\\.", "") -> Retira do valor o .(ponto) e não coloca nada "" -- EXP : 10.500,20 = 10500,20
+			 * replaceAll("\\,", ".") -> Retira onde tem ,(virgula) e coloca .(ponto) -- EXP : 10.500,20 = 10500.20
+			 */
 			String valorParse = valor.replace("R$", "").replaceAll("\\.", "").replaceAll("\\,", ".");
-			produto.setQuantidade(Double.parseDouble(quantidade));
+			
+			produto.setQuantidade(Double.parseDouble(quantidade)); //
 			produto.setValor(Double.parseDouble(valorParse));
 		}
 		produto.setCategoria(Long.parseLong(categoria));
 		return produto;
 	}
+	
+	
+	
 	
 	private String msg(boolean nome, String nomeProduto) {
 		
@@ -129,6 +164,9 @@ public class ProdutoServlet extends HttpServlet {
 			
 		return msg;
 	}
+	
+	
+	
 	
 	private void redirecionarUsuario(String acao, String prod, HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {		
@@ -146,9 +184,13 @@ public class ProdutoServlet extends HttpServlet {
 			if (acao.equalsIgnoreCase("listarTodos")) {
 				listarTodosProdutos(request, response);
 			}			
+		} else {			
+			listarTodosProdutos(request, response);
 		}
-		listarTodosProdutos(request, response);
 	}
+	
+	
+	
 	
 	private void editarProduto(String prod, HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {		
@@ -160,6 +202,9 @@ public class ProdutoServlet extends HttpServlet {
 		view.forward(request, response);		
 	}
 	
+	
+	
+	
 	private void listarTodosProdutos(HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {		
 		RequestDispatcher view = request.getRequestDispatcher(PAGINA_CADASTRO_PRODUTO);
@@ -167,6 +212,9 @@ public class ProdutoServlet extends HttpServlet {
 		request.setAttribute(CATEGORIAS, produtoDAO.listarCategorias());
 		view.forward(request, response);	
 	}
+	
+	
+	
 	
 	private void deletarProduto(String prod, HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {		
@@ -176,6 +224,9 @@ public class ProdutoServlet extends HttpServlet {
 		request.setAttribute(CATEGORIAS, produtoDAO.listarCategorias());
 		view.forward(request, response);		
 	}
+	
+	
+	
 	
 	private void validarCamposFormulario(String nome, String quantidade, String valor, 
 			HttpServletRequest request, HttpServletResponse response, Produto produto) 
@@ -189,6 +240,9 @@ public class ProdutoServlet extends HttpServlet {
 		} 
 	}
 	
+	
+	
+	
 	private void redirecionarUsuarioValidarCamposFormulario(Produto produto, String campo, HttpServletRequest request, HttpServletResponse response) 
 			throws ServletException, IOException {		
 		RequestDispatcher view = request.getRequestDispatcher(PAGINA_CADASTRO_PRODUTO);
@@ -200,8 +254,14 @@ public class ProdutoServlet extends HttpServlet {
 		return;
 	}
 	
+	
+	
+	
 	private String declararMensagemParaUsuario(String campo) {
 		return "O campo " + campo.toUpperCase() + "é de preenchimento obrigatório";
 	}
+	
+	
+	
 
 }

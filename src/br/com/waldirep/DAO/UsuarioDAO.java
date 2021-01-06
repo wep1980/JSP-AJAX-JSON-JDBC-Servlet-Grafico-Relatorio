@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.com.waldirep.beans.Usuario;
-import br.com.waldirep.connection.SingleConnection;
+import br.com.waldirep.connection.SingleConnectionHeroku;
 import br.com.waldirep.exception.OrphanRemovalException;
 import br.com.waldirep.util.LogUtil;
 
@@ -19,7 +19,7 @@ public class UsuarioDAO {
 	
 
 	public UsuarioDAO() {
-		connection = SingleConnection.getConnection();
+		connection = SingleConnectionHeroku.getConnection();
 	}
 	
 	
@@ -59,23 +59,13 @@ public class UsuarioDAO {
 	}
 	
 	
-	
-	public List<Usuario> listarPorNome(String descricaoConsulta) throws SQLException {		
-		String sql = "SELECT * FROM usuario WHERE login <> 'admin' AND LOWER(nome) "
-				+ "LIKE LOWER('%" + descricaoConsulta + "%') ORDER BY nome";		
-		return listarUsuarios(sql);
-		
-	}
-	
-	
 
-	public List<Usuario> listarTodos() throws SQLException {
-		String sql = "SELECT * FROM usuario WHERE login <> 'admin'";
-		return listarUsuarios(sql);
-	}
-	
-	
-
+	/**
+	 * Metodo privado desta classe que lista todos os usuarios, metodo utilizado em metodos abaixo
+	 * @param sql
+	 * @return
+	 * @throws SQLException
+	 */
 	private List<Usuario> listarUsuarios(String sql) throws SQLException {
 		List<Usuario> usuarios = new ArrayList<>();
 		try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -107,7 +97,35 @@ public class UsuarioDAO {
 	}
 	
 	
+	
+	public List<Usuario> listarPorNome(String descricaoConsulta) throws SQLException {		
+		String sql = "SELECT * FROM usuario WHERE login <> 'admin' AND LOWER(nome) "
+				+ "LIKE LOWER('%" + descricaoConsulta + "%') ORDER BY nome";		
+		return listarUsuarios(sql);
+		
+	}
+	
+	
 
+	/**
+	 * Metodo que lista todos os usuarios menos o usuario admin
+	 * @return
+	 * @throws SQLException
+	 */
+	public List<Usuario> listarTodos() throws SQLException {
+		String sql = "SELECT * FROM usuario WHERE login <> 'admin'";
+		return listarUsuarios(sql);
+	}
+	
+	
+
+	/**
+	 * Metodo que deleta um usuario, menos o admin
+	 * @param id
+	 * @return
+	 * @throws OrphanRemovalException
+	 * @throws SQLException
+	 */
 	public Boolean deletar(String id) throws OrphanRemovalException, SQLException {
 		try {
 			String sql = "DELETE FROM usuario WHERE id = '" + id + "' AND login <> 'admin'";
@@ -124,6 +142,12 @@ public class UsuarioDAO {
 	
 	
 
+	/**
+	 * Metodo que consulta os usuarios cadastrados por ID, o unico usuario que não aparece na consulta e o admin
+	 * @param id
+	 * @return
+	 * @throws SQLException
+	 */
 	public Usuario consultarPorId(String id) throws SQLException {
 		Usuario usuario = null;		
 		String sql = "SELECT * FROM usuario WHERE id = '" + id + "' AND login <> 'admin'";

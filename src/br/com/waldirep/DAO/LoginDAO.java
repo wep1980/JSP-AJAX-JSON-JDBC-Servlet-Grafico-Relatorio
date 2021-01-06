@@ -5,14 +5,14 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import br.com.waldirep.connection.SingleConnection;
+import br.com.waldirep.connection.SingleConnectionHeroku;
 
 public class LoginDAO {
 	
 	private Connection connection;
 	
 	public LoginDAO() {
-		connection = SingleConnection.getConnection();
+		connection = SingleConnectionHeroku.getConnection();
 	}
 	
 	public boolean validarLogin(String login, String senha) throws SQLException {		

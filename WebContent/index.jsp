@@ -16,11 +16,10 @@
 	</head>
 	<body>		
 		<div class="login-page">
-			<h3 style="text-align: center;">Projeto Didático</h3>
-			<h1 style="text-align: center;">JSP - Servlet - JDBC</h1>
+			<h2 style="text-align: center;">Para acesso ao sistema</h2>
 			<div style="text-align: center;">
 				<span><b>USUÁRIO:</b> admin<br/><b>SENHA:</b> admin</span>
-			</div><br>
+			</div><br/>
   			<div class="form">
 				<form action="LoginServlet" method="post" class="login-form">				
 					Login:
@@ -33,7 +32,10 @@
 				</form>		
 			</div>
 			<h3 style="text-align: center;">
-				<a style="text-decoration: none;" href="https://www.jdevtreinamento.com.br/formacao-java-web-profissional">Formação Java WEB</a>
+			    <p>© Desenvolvido por Waldir Escouto Pereira </p>
+				<a style="text-decoration: none;" href="https://www.linkedin.com/in/wepdev/" target="none">
+				  <img src="resources/img/linkedin.png"  alt="linkedin">
+				</a>
 			</h3>
 		</div>
 	</body>
